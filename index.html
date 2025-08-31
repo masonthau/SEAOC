@@ -152,8 +152,11 @@ function toggleHint(n){
 }
 
 function parseTwoNumbers(str){
-  const nums = (str.match(/[-+]?\\d*\\.?\\d+/g) || []).map(Number).filter(x => !isNaN(x));
-  return nums.length >= 2 ? [nums[0], nums[1]] : null;
+    // Correct regex: find two floats anywhere in the string
+    const nums = (str.match(/[-+]?\d*\.?\d+/g) || [])
+      .map(Number)
+      .filter(x => !isNaN(x));
+    return nums.length >= 2 ? [nums[0], nums[1]] : null;
 }
 function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
 

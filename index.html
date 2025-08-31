@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structural QR Puzzle</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel:#151a24;
+    --ink:#e9f0fb;
+    --muted:#9db0c8;
+    --accent:#7bd389;
+    --accent2:#82b1ff;
+    --bad:#ff7474;
+    --warn:#ffc274;
+    --grid:#2a3342;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:
+    radial-gradient(1000px 600px at 10% -10%, rgba(130,177,255,.10), transparent),
+    radial-gradient(900px 600px at 120% 20%, rgba(123,211,137,.10), transparent),
+    var(--bg);
+    color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  .wrap{max-width:960px;margin:0 auto;padding:2rem 1rem 5rem}
+  header h1{margin:.2rem 0 .2rem;font-size:clamp(1.6rem,3.6vw,2.6rem);letter-spacing:.3px}
+  header .sub{margin:0 0 1rem;color:var(--muted)}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.10);border-radius:16px;padding:1rem 1.1rem;margin:1rem 0;
+    box-shadow:0 16px 38px rgba(0,0,0,.35)}
+  .stage{display:none}.stage.active{display:block}
+  .gridwrap{position:relative;aspect-ratio:1.4/1; width:100%; border-radius:14px; overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.08);}
+  .grid{position:absolute; inset:0; background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: calc(100%/8) calc(100%/5);}
+  .labels{position:absolute; inset:0; padding:.5rem}
+  .labels .corner{position:absolute; top:.4rem; right:.6rem; color:var(--muted); font-size:.9rem}
+  .lbl{position:absolute; font-weight:700; letter-spacing:.5px; font-size:clamp(18px, 2.8vw, 28px); user-select:none}
+  .hint{color:var(--muted); font-size:.95rem; margin-top:.5rem; display:none}
+  .row{display:grid; grid-template-columns:1fr auto; gap:.6rem; margin-top:.8rem}
+  input[type=text]{width:100%; padding:.8rem .95rem; background:#0b0e13; color:var(--ink);
+    border:1px solid rgba(255,255,255,.12); border-radius:12px; outline:none}
+  input::placeholder{color:#7b87a1}
+  button{appearance:none; border:0; padding:.8rem 1rem; border-radius:12px; font-weight:800; cursor:pointer;
+    background:linear-gradient(180deg, var(--accent2), #4a8fe0); color:#06101a}
+  .mutebtn{background:#253044; color:var(--ink); border:1px solid rgba(255,255,255,.12)}
+  .ok{color:var(--accent)} .bad{color:var(--bad)} .small{font-size:.92rem;color:var(--muted)}
+  .pill{display:inline-block; padding:.2rem .6rem; border:1px solid rgba(255,255,255,.15); border-radius:999px; color:var(--muted); font-size:.85rem; margin-right:.35rem}
+  .flex{display:flex; gap:.6rem; align-items:center; flex-wrap:wrap}
+  .right{margin-left:auto}
+  .center{display:flex; align-items:center; justify-content:center}
+  .sp{height:8px}
+  .linkrow{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem}
+  .linkrow a{display:inline-block; text-decoration:none; background:#253044; border:1px solid rgba(255,255,255,.12); color:var(--ink);
+    padding:.55rem .75rem; border-radius:10px}
+  /* Dark-mode reveal for puzzle digits */
+  .reveal{opacity:0; transition:opacity .25s ease}
+  @media (prefers-color-scheme: dark){
+    .reveal{opacity:1}
+  }
+  /* Light-mode: keep digits essentially invisible by matching tones */
+  @media (prefers-color-scheme: light){
+    .reveal{opacity:0.04}
+  }
+  /* Final green screen */
+  .greenscreen{position:fixed; inset:0; background:#16a34a; color:#052e12; display:none; align-items:center; justify-content:center; text-align:center}
+  .greenscreen.active{display:flex}
+  .greenscreen h2{font-size:clamp(2rem, 6vw, 4rem); margin:.5rem 0 0; letter-spacing:.5px}
+  .greenscreen .sub{color:#08361a; font-weight:700; margin-top:.4rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Structural QR Puzzle</h1>
+    <p class="sub">Two fast stages. Stage 1 hides in plain sight. Stage 2 sends you to an epicenter. Type the right answers to advance.</p>
+    <div class="pill">Mobile-friendly</div><div class="pill">No sign-in</div><div class="pill">Under 5 minutes</div>
+  </header>
+
+  <!-- Stage 1 -->
+  <section id="stage1" class="card stage active">
+    <h2 style="margin:.2rem 0 .4rem;">Stage 1 — Gridline Secret</h2>
+    <div class="small">Some details only appear under the right viewing <em>conditions</em>. Read left → right.</div>
+    <div class="sp"></div>
+    <div class="gridwrap">
+      <div class="grid"></div>
+      <div class="labels">
+        <div class="corner">Plan A · Level 3</div>
+        <!-- Position a handful of characters that make the LAT/LON when revealed in dark mode -->
+        <div class="lbl reveal" style="top:12%; left:6%;">3</div>
+        <div class="lbl reveal" style="top:12%; left:16%;">7</div>
+        <div class="lbl reveal" style="top:12%; left:26%;">.</div>
+        <div class="lbl reveal" style="top:12%; left:32%;">0</div>
+        <div class="lbl reveal" style="top:12%; left:42%;">4</div>
+
+        <div class="lbl reveal" style="top:58%; left:12%;">-</div>
+        <div class="lbl reveal" style="top:58%; left:18%;">1</div>
+        <div class="lbl reveal" style="top:58%; left:28%;">2</div>
+        <div class="lbl reveal" style="top:58%; left:38%;">1</div>
+        <div class="lbl reveal" style="top:58%; left:48%;">.</div>
+        <div class="lbl reveal" style="top:58%; left:54%;">8</div>
+        <div class="lbl reveal" style="top:58%; left:62%;">8</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <input id="ans1" type="text" placeholder='Type the coordinates like 37.04, -121.88'>
+      <button onclick="checkStage1()">Submit</button>
+    </div>
+    <div id="msg1" class="small" style="margin-top:.5rem;"></div>
+    <div class="flex" style="margin-top:.5rem;">
+      <button class="mutebtn" onclick="toggleHint(1)">Hint</button>
+      <div id="hint1" class="hint">Try changing your system <strong>appearance</strong> (e.g., Light ↔ Dark).</div>
+      <div class="right small">Change answers via <span class="mono">CONFIG</span> in the code.</div>
+    </div>
+  </section>
+
+  <!-- Stage 2 -->
+  <section id="stage2" class="card stage">
+    <h2 style="margin:.2rem 0 .4rem;">Stage 2 — Name the Quake</h2>
+    <div class="small">Open the coordinates in your maps app, identify the earthquake (name + year), then enter it below.</div>
+    <div class="linkrow" id="mapLinks"></div>
+    <div class="row">
+      <input id="ans2" type="text" placeholder='e.g., Loma Prieta 1989'>
+      <button onclick="checkStage2()">Submit</button>
+    </div>
+    <div id="msg2" class="small" style="margin-top:.5rem;"></div>
+    <div class="flex" style="margin-top:.5rem;">
+      <button class="mutebtn" onclick="toggleHint(2)">Hint</button>
+      <div id="hint2" class="hint">Enter the <em>name</em> and the <em>year</em>. (Example format: “Example Quake 1999”).</div>
+      <div class="right small">Tap a map link to jump to the epicenter.</div>
+    </div>
+  </section>
+
+  <!-- Final Green Screen -->
+  <div id="green" class="greenscreen">
+    <div>
+      <h2>Congratulations! Buzz in!</h2>
+      <div class="sub">Tell us your answer at the buzzer.</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <section class="card" style="margin-top:1rem;">
+    <div class="small">Organizer tips: edit <span class="mono">CONFIG</span> below (coordinates, tolerance, quake names, year). The hidden digits are just absolutely positioned elements you can move or replace.</div>
+  </section>
+
+</div>
+
+<script>
+// ---------- EASY CONFIG (edit these) ----------
+const CONFIG = {
+  // Stage 1 target coordinates (as floats). Edit to your event's quake.
+  targetLat: 37.04,
+  targetLon: -121.88,
+  // How close typed numbers need to be (in absolute degrees)
+  coordTolerance: 0.01,
+  // Stage 2 quake answer
+  quake: {
+    // Accepted names (lowercase, punctuation-insensitive). Add variants if needed.
+    names: ["loma prieta"],
+    year: 1989
+  }
+};
+// ---------------------------------------------
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const normLetters = s => (s||"").toString().toLowerCase().normalize("NFKD").replace(/[^\p{a-z}\s]/gi,"").replace(/\s+/g," ").trim();
+
+function toggleHint(n){
+  const el = $("#hint"+n);
+  el.style.display = (el.style.display === "block" ? "none" : "block");
+}
+
+// -------- Stage 1: Coordinates --------
+function parseTwoNumbers(str){
+  // Find two floats in the string
+  const nums = (str.match(/[-+]?\d*\.?\d+/g) || []).map(Number).filter(x => !Number.isNaN(x));
+  if (nums.length >= 2) return [nums[0], nums[1]];
+  return null;
+}
+function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
+
+function checkStage1(){
+  const raw = $("#ans1").value;
+  const pair = parseTwoNumbers(raw);
+  const msg = $("#msg1");
+  if (!pair){
+    msg.className = "small bad";
+    msg.textContent = "Please enter two numbers (latitude, longitude).";
+    return;
+  }
+  const [lat, lon] = pair;
+  const ok = withinTolerance(lat, CONFIG.targetLat, CONFIG.coordTolerance)
+         && withinTolerance(lon, CONFIG.targetLon, CONFIG.coordTolerance);
+  if (ok){
+    msg.className = "small ok";
+    msg.textContent = "Looks good! Proceeding to Stage 2…";
+    setTimeout(()=>{
+      showStage("stage2");
+      renderMapLinks(CONFIG.targetLat, CONFIG.targetLon);
+      $("#ans2").focus();
+    }, 500);
+  } else {
+    msg.className = "small bad";
+    msg.textContent = "Those coords don’t look right. Try again (format like 37.04, -121.88).";
+  }
+}
+
+function renderMapLinks(lat, lon){
+  const wrap = $("#mapLinks");
+  wrap.innerHTML = "";
+  const g = document.createElement("a");
+  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+  g.target = "_blank"; g.rel="noreferrer"; g.textContent = "Open in Google Maps";
+  const a = document.createElement("a");
+  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`;
+  a.target = "_blank"; a.rel="noreferrer"; a.textContent = "Open in Apple Maps";
+  wrap.appendChild(g); wrap.appendChild(a);
+}
+
+// -------- Stage 2: Quake Name + Year --------
+function checkStage2(){
+  const raw = $("#ans2").value;
+  const msg = $("#msg2");
+  const yearMatch = raw.match(/(19|20)\d{2}/);
+  const year = yearMatch ? parseInt(yearMatch[0],10) : null;
+
+  let nameOnly = raw.replace(/earthquake/ig,"");
+  nameOnly = normLetters(nameOnly);
+  if (year) nameOnly = nameOnly.replace(String(year),"").trim();
+
+  const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
+  const yearOk = (year === CONFIG.quake.year);
+
+  if (nameOk && yearOk){
+    msg.className = "small ok";
+    msg.textContent = "Correct!";
+    setTimeout(()=>{
+      showGreen();
+    }, 400);
+  } else {
+    msg.className = "small bad";
+    if (!yearOk && !nameOk) msg.textContent = "We need the quake name and the year.";
+    else if (!nameOk) msg.textContent = "That name doesn’t match. Try another common name.";
+    else msg.textContent = "Double-check the year.";
+  }
+}
+
+// -------- View switching --------
+function showStage(id){
+  $$(".stage").forEach(el => el.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+function showGreen(){
+  $("#stage1").classList.remove("active");
+  $("#stage2").classList.remove("active");
+  $("#green").classList.add("active");
+}
+</script>
+</body>
+</html>

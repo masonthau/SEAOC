@@ -45,10 +45,8 @@
   }
   .stage{display:none}.stage.active{display:block}
 
-  .gridwrap{position:relative;aspect-ratio:1.2/1;width:100%;border-radius:14px;overflow:hidden;
-    border:1px solid rgba(255,255,255,.08)}
-  .grid{position:absolute;inset:0;
-    background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  .gridwrap{position:relative;aspect-ratio:1.2/1;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+  .grid{position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size: calc(100%/8) calc(100%/5)}
   .labels{position:absolute;inset:0;padding:.5rem}
   .labels .corner{position:absolute;top:.4rem;right:.6rem;color:var(--muted);font-size:.85rem}
@@ -62,7 +60,7 @@
 
   /* Input rows */
   .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.55rem;margin-top:.7rem}
-  input[type=text]{width:100%;padding:1rem .95rem;background:#0b0e13;color:var(--ink);
+  input[type=text], input[type=number]{width:100%;padding:1rem .95rem;background:#0b0e13;color:var(--ink);
     border:1px solid rgba(255,255,255,.12);border-radius:12px;outline:none;font-size:1rem;min-height:48px}
   button{border:0;padding:1rem 1rem;border-radius:12px;font-weight:800;cursor:pointer;
     background:linear-gradient(180deg, var(--accent2), #4a8fe0);color:#06101a;min-height:48px;font-size:1rem}
@@ -105,172 +103,4 @@
         <div class="corner">Plan A · Level 3</div>
         <!-- Hidden LAT/LON digits (revealed in dark mode) -->
         <div class="lbl reveal" style="top:12%; left:6%;">3</div>
-        <div class="lbl reveal" style="top:12%; left:16%;">7</div>
-        <div class="lbl reveal" style="top:12%; left:26%;">.</div>
-        <div class="lbl reveal" style="top:12%; left:32%;">0</div>
-        <div class="lbl reveal" style="top:12%; left:42%;">4</div>
-
-        <div class="lbl reveal" style="top:58%; left:12%;">-</div>
-        <div class="lbl reveal" style="top:58%; left:18%;">1</div>
-        <div class="lbl reveal" style="top:58%; left:28%;">2</div>
-        <div class="lbl reveal" style="top:58%; left:38%;">1</div>
-        <div class="lbl reveal" style="top:58%; left:48%;">.</div>
-        <div class="lbl reveal" style="top:58%; left:54%;">8</div>
-        <div class="lbl reveal" style="top:58%; left:62%;">8</div>
-      </div>
-    </div>
-
-    <!-- Two inputs: Latitude + Longitude -->
-    <div class="row">
-      <input id="lat" type="number" step="any" placeholder="Latitude (e.g., 37.04)">
-      <input id="lon" type="number" step="any" placeholder="Longitude (e.g., -121.88)">
-      <button onclick="checkStage1()">Submit</button>
-    </div>
-    <div id="msg1" class="small" style="margin-top:.4rem;"></div>
-
-    <button class="mutebtn" style="margin-top:.55rem" onclick="toggleHint(1)">Hint</button>
-    <div id="hint1" class="hint">Try switching to <strong>Dark Mode</strong> on your phone.</div>
-  </section>
-
-  <!-- Stage 2 -->
-  <section id="stage2" class="card stage">
-    <h2>Stage 2 — Name the Quake</h2>
-    <p class="small">Open the coordinates in your maps app. Then enter the quake <em>name</em> and <em>year</em>.</p>
-    <div class="linkrow" id="mapLinks"></div>
-
-    <!-- Two inputs: Name + Year -->
-    <div class="row">
-      <input id="quakeName" type="text" placeholder="Earthquake name (e.g., Loma Prieta)">
-      <input id="quakeYear" type="text" inputmode="numeric" placeholder="Year (e.g., 1989)">
-      <button onclick="checkStage2()">Submit</button>
-    </div>
-    <div id="msg2" class="small" style="margin-top:.4rem;"></div>
-
-    <button class="mutebtn" style="margin-top:.55rem" onclick="toggleHint(2)">Hint</button>
-    <div id="hint2" class="hint">Format: “Name” and “Year” (e.g., Northridge • 1994). The word “earthquake” is optional.</div>
-  </section>
-
-  <!-- Final Green Screen -->
-  <div id="green" class="greenscreen" role="alert" aria-live="assertive">
-    <div>
-      <h2>Congratulations! Buzz in!</h2>
-      <p class="sub">Tell us your answer at the buzzer.</p>
-    </div>
-  </div>
-
-</div>
-
-<script>
-/* -------------------- EASY CONFIG -------------------- */
-const CONFIG = {
-  // Stage 1 target coordinates (as floats). Edit to your event's quake.
-  targetLat: 37.04,
-  targetLon: -121.88,
-  // How close typed numbers need to be (absolute degrees)
-  coordTolerance: 0.01,
-  // Stage 2 quake answer
-  quake: {
-    // Accepted names (lowercase, punctuation-insensitive). Add variants if needed.
-    names: ["loma prieta"],
-    year: 1989
-  }
-};
-/* ----------------------------------------------------- */
-
-const $ = s => document.querySelector(s);
-
-/* Utilities */
-function toggleHint(n){
-  const el = document.querySelector("#hint"+n);
-  el.style.display = (el.style.display === "block" ? "none" : "block");
-}
-function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
-function normName(s){
-  return (s || "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/earthquake/g, "")        // ignore the word "earthquake"
-    .replace(/[^\p{a-z}\s]/gu, "")     // strip punctuation/diacritics
-    .replace(/\s+/g, " ")              // collapse spaces
-    .trim();
-}
-
-/* Stage 1: check lat/lon */
-function checkStage1(){
-  const latVal = parseFloat(document.getElementById("lat").value);
-  const lonVal = parseFloat(document.getElementById("lon").value);
-  const msg = document.getElementById("msg1");
-
-  if (isNaN(latVal) || isNaN(lonVal)){
-    msg.textContent = "Enter both latitude and longitude.";
-    msg.className = "small bad";
-    return;
-  }
-
-  const ok = withinTolerance(latVal, CONFIG.targetLat, CONFIG.coordTolerance)
-          && withinTolerance(lonVal, CONFIG.targetLon, CONFIG.coordTolerance);
-
-  if (ok){
-    msg.textContent = "Correct! Proceeding…";
-    msg.className = "small ok";
-    setTimeout(()=>{
-      showStage("stage2");
-      renderMapLinks(CONFIG.targetLat, CONFIG.targetLon);
-      document.getElementById("quakeName").focus();
-    }, 350);
-  } else {
-    msg.textContent = "Not quite. Try again (e.g., 37.04 and -121.88).";
-    msg.className = "small bad";
-  }
-}
-
-/* Render map links after Stage 1 success */
-function renderMapLinks(lat, lon){
-  const wrap = document.getElementById("mapLinks");
-  wrap.innerHTML = "";
-  const g = document.createElement("a");
-  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-  g.target = "_blank"; g.textContent = "Open in Google Maps";
-  const a = document.createElement("a");
-  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`;
-  a.target = "_blank"; a.textContent = "Open in Apple Maps";
-  wrap.appendChild(g); wrap.appendChild(a);
-}
-
-/* Stage 2: check name + year */
-function checkStage2(){
-  const rawName = document.getElementById("quakeName").value || "";
-  const rawYear = document.getElementById("quakeYear").value || "";
-  const msg = document.getElementById("msg2");
-
-  const year = parseInt(rawYear, 10);
-  const nameOnly = normName(rawName);
-
-  const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
-  const yearOk = (year === CONFIG.quake.year);
-
-  if (nameOk && yearOk){
-    msg.textContent = "Correct!";
-    msg.className = "small ok";
-    setTimeout(()=>{ showGreen(); }, 320);
-  } else {
-    msg.className = "small bad";
-    if (!nameOk && !yearOk) msg.textContent = "We need the quake name and the year.";
-    else if (!nameOk)       msg.textContent = "That name doesn’t match. Try another common name.";
-    else                    msg.textContent = "Double-check the year.";
-  }
-}
-
-/* View switching */
-function showStage(id){
-  document.querySelectorAll(".stage").forEach(el => el.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-function showGreen(){
-  document.querySelectorAll(".stage").forEach(el => el.classList.remove("active"));
-  document.getElementById("green").classList.add("active");
-}
-</script>
-</body>
-</html>
+        <div class="lbl reveal" style="top:12%;

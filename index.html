@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0f14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8ff">
-<title>Structural QR Puzzle</title>
+<title>Game Changers: Challenge #1</title>
 <style>
   :root{
     --bg:#0b0f14;
@@ -22,29 +22,21 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
   body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
+    margin:0;background:var(--bg);color:var(--ink);
     font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
   }
   @media (prefers-color-scheme: light){
-    body{ background: var(--lightbg); color: var(--lightink); }
+    body{background:var(--lightbg);color:var(--lightink)}
   }
   .wrap{max-width:720px;margin:0 auto;padding:1.25rem 1rem 5.5rem;}
-  header h1{margin:.1rem 0;font-size:clamp(1.4rem,5.6vw,2rem);}
+  header h1{margin:.1rem 0;font-size:clamp(1.4rem,5.6vw,2rem)}
   header .sub{margin:0 0 .75rem;color:var(--muted);font-size:.95rem}
   .pill{display:inline-block;padding:.2rem .6rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:var(--muted);font-size:.8rem;margin-right:.35rem}
-
   .card{
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:16px;
-    padding:0.9rem 1rem;
-    margin:0.75rem 0;
-    box-shadow:0 12px 28px rgba(0,0,0,.28)
+    background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;padding:0.9rem 1rem;margin:0.75rem 0;box-shadow:0 12px 28px rgba(0,0,0,.28)
   }
   .stage{display:none}.stage.active{display:block}
-
   .gridwrap{position:relative;aspect-ratio:1.2/1;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
   .grid{position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size: calc(100%/8) calc(100%/5)}
@@ -53,54 +45,17 @@
   .lbl{position:absolute;font-weight:800;font-size:clamp(20px,5.2vw,28px);user-select:none}
   .reveal{opacity:0;transition:opacity .2s ease}
   @media (prefers-color-scheme: dark){ .reveal{opacity:1} }
-  @media (prefers-color-scheme: light){ .reveal{opacity:.05} }
+  @media (prefers-color-scheme: light){ .reveal{opacity:.06} }
 
   .hint{color:var(--muted);font-size:.95rem;margin-top:.5rem;display:none}
   .ok{color:var(--accent)} .bad{color:var(--bad)} .small{font-size:.92rem;color:var(--muted)}
+  label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:.25rem}
 
-  /* Input rows */
-  .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.55rem;margin-top:.7rem}
-  input[type=text], input[type=number]{width:100%;padding:1rem .95rem;background:#0b0e13;color:var(--ink);
-    border:1px solid rgba(255,255,255,.12);border-radius:12px;outline:none;font-size:1rem;min-height:48px}
-  button{border:0;padding:1rem 1rem;border-radius:12px;font-weight:800;cursor:pointer;
-    background:linear-gradient(180deg, var(--accent2), #4a8fe0);color:#06101a;min-height:48px;font-size:1rem}
-  .mutebtn{background:#253044;color:var(--ink);border:1px solid rgba(255,255,255,.12)}
-
-  /* Map links */
-  .linkrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
-  .linkrow a{background:#253044;color:var(--ink);padding:.7rem .9rem;border-radius:12px;text-decoration:none;font-weight:650}
-
-  /* Final green screen */
-  .greenscreen{position:fixed;inset:0;background:#16a34a;color:#052e12;display:none;align-items:center;justify-content:center;text-align:center;padding:1rem}
-  .greenscreen.active{display:flex}
-  .greenscreen h2{font-size:clamp(1.8rem,7vw,3.2rem);margin:.5rem 0 0}
-  .greenscreen .sub{font-weight:700;margin-top:.35rem}
-
-  /* Stack on small screens */
-  @media (max-width:560px){
-    .row{grid-template-columns:1fr;gap:.5rem}
-    button{width:100%}
+  /* Inputs row: two inputs + button */
+  .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-top:.8rem}
+  input[type=text], input[type=number]{
+    width:100%;padding:.9rem .95rem;background:#0b0e13;color:var(--ink);
+    border:1px solid rgba(255,255,255,.18);border-radius:12px;outline:none;font-size:1rem;min-height:48px
   }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header>
-    <h1>Structural QR Puzzle</h1>
-    <p class="sub">Stage 1 hides in plain sight. Stage 2 sends you to an epicenter. Type the right answers to advance.</p>
-    <div class="pill">Mobile-friendly</div><div class="pill">No sign-in</div><div class="pill">~5 minutes</div>
-  </header>
-
-  <!-- Stage 1 -->
-  <section id="stage1" class="card stage active">
-    <h2>Stage 1 — Gridline Secret</h2>
-    <p class="small">Switch your phone to Dark Mode to see hidden digits. Read left → right.</p>
-
-    <div class="gridwrap" aria-label="Plan grid with hidden digits that appear in Dark Mode">
-      <div class="grid" aria-hidden="true"></div>
-      <div class="labels">
-        <div class="corner">Plan A · Level 3</div>
-        <!-- Hidden LAT/LON digits (revealed in dark mode) -->
-        <div class="lbl reveal" style="top:12%; left:6%;">3</div>
-        <div class="lbl reveal" style="top:12%;
+  @media (prefers-color-scheme: light){
+    input[type=text], input[type=num]()

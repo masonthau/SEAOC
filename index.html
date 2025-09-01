@@ -76,13 +76,13 @@
   .greenscreen.active{display:flex}
   .greenscreen h2{font-size:clamp(1.8rem,7vw,3.2rem);margin:.5rem 0 0}
 
-  /* ---------- NEW (scoped & minimal): make image fit the box ---------- */
-  /* 1) Cap the Stage-1 image area's height so the image can scale down */
+  /* ---------- Fit the image to the box ---------- */
   #stage1 .gridwrap { max-height: 90vh; }
-
-  /* 2) Make the plan image contain-fit inside the wrapper without cropping */
   #stage1 .gridwrap picture { display:block; width:100%; height:100%; }
   .plan-img { display:block; width:100%; height:100%; object-fit: contain; }
+
+  /* ---------- NEW: delayed hint button visibility ---------- */
+  .hidden{display:none !important;}
 </style>
 </head>
 <body>
@@ -90,13 +90,12 @@
 
   <header>
     <h1>Game Changers: Challenge #1</h1>
-    <p class="sub">Stage 1 hides in plain sight. Stage 2 sends you to an epicenter. Type the right answers to advance.</p>
   </header>
 
   <!-- Stage 1 -->
   <section id="stage1" class="card stage active">
     <h2>Stage 1 — The Hidden Message</h2>
-    <p class="small">“These plans show nothing at first glance, but switch your view and hidden numbers appear to guide your path.”.</p>
+    <p class="small">These plans show nothing at first glance, but switch your view and hidden coordinates appear to guide your path.</p>
 
     <div class="gridwrap">
       <picture>
@@ -112,8 +111,8 @@
       <button onclick="checkStage1()">Submit</button>
     </div>
     <div id="msg1" class="small"></div>
-    <button class="mutebtn" onclick="toggleHint(1)">Hint</button>
-    <div id="hint1" class="hint">Try switching to <strong>Dark Mode</strong>.</div>
+    <button id="hintBtn1" class="mutebtn hidden" onclick="toggleHint(1)">Hint</button>
+    <div id="hint1" class="hint">Try switching your device to <strong>Dark Mode</strong>.</div>
   </section>
 
   <!-- Stage 2 -->
@@ -122,19 +121,19 @@
     <p class="small">The ground once cracked where these coordinates lead — name the quake and the year of its deed.</p>
     <div class="linkrow" id="mapLinks"></div>
     <div class="row">
-      <input id="quakeName" type="text" placeholder="Earthquake">
+      <input id="quakeName" type="text" placeholder="EQ Name">
       <input id="quakeYear" type="number" inputmode="numeric" step="1" placeholder="Year">
       <button id="btn2" type="button" onclick="checkStage2()">Submit</button>
     </div>
     <div id="msg2" class="small" style="margin-top:.4rem;"></div>
-    <button class="mutebtn" onclick="toggleHint(2)">Hint</button>
+    <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
     <div id="hint2" class="hint">Provide the name and year of the earthquake with its epicenter at these coordinates.</div>
   </section>
 
   <div id="green" class="greenscreen">
     <div>
       <h2>Congratulations! Buzz in!</h2>
-      <p class="sub">Tell us your answer at the buzzer.</p>
+      <p class="sub">Prepare for your final quiz.</p>
     </div>
   </div>
 
@@ -152,11 +151,31 @@ const CONFIG = {
 };
 
 const $ = s => document.querySelector(s);
+let hintTimer = null;
+
 function toggleHint(n){
   const el = document.querySelector("#hint"+n);
   el.style.display = (el.style.display === "block" ? "none" : "block");
 }
 function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
+
+/* --- NEW: start a 30s timer for the given stage's hint button --- */
+function startHintTimer(stageNumber){
+  // clear any previous timer
+  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+  // hide both buttons first (safe reset)
+  const b1 = document.getElementById("hintBtn1");
+  const b2 = document.getElementById("hintBtn2");
+  if (b1) b1.classList.add("hidden");
+  if (b2) b2.classList.add("hidden");
+
+  const targetBtn = document.getElementById(stageNumber === 1 ? "hintBtn1" : "hintBtn2");
+  if (!targetBtn) return;
+
+  hintTimer = setTimeout(()=>{
+    targetBtn.classList.remove("hidden");
+  }, 30000); // 30,000 ms = 30 seconds
+}
 
 function checkStage1(){
   const latVal = parseFloat(document.getElementById("lat").value);
@@ -175,7 +194,7 @@ function checkStage1(){
     msg.textContent = "Correct! Proceeding…"; msg.className="small ok";
     setTimeout(()=>{ showStage("stage2"); renderMapLinks(CONFIG.targetLat, CONFIG.targetLon); },400);
   } else {
-    msg.textContent = "Not quite. Try again (e.g., 37.04 and -121.88)."; msg.className="small bad";
+    msg.textContent = "Not quite, try again."; msg.className="small bad";
   }
 }
 
@@ -218,11 +237,18 @@ function showStage(id){
   document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   window.scrollTo({top:0,behavior:"smooth"});
+  // start the correct hint timer whenever a stage is shown
+  if (id === "stage1") startHintTimer(1);
+  if (id === "stage2") startHintTimer(2);
 }
 function showGreen(){
   document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
   document.getElementById("green").classList.add("active");
+  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; } // no hints on final
 }
+
+/* Start Stage 1 hint timer on first load */
+document.addEventListener("DOMContentLoaded", ()=> startHintTimer(1));
 </script>
 </body>
 </html>

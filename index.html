@@ -4,95 +4,201 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0f14">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8ff">
-<title>Game Changers: Challenge #1</title>
+<title>Game Changers: Immunity Challenge</title>
+
+<!-- Optional themed web fonts (safe fallbacks provided) -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+
 <style>
+  /* =======================================================
+     SURVIVOR THEME — purely visual changes (no layout/logic)
+     ======================================================= */
   :root{
-    --bg:#0b0f14;
-    --ink:#e9f0fb;
-    --muted:#9db0c8;
-    --accent:#7bd389;
-    --accent2:#82b1ff;
-    --bad:#ff7474;
-    --grid:#2a3342;
-    --lightbg:#f6f8ff;
-    --lightink:#0e1320;
+    /* Jungle / island palette */
+    --bg: #0c1a14;          /* deep jungle green */
+    --bg2:#0e231a;          /* slightly lighter jungle */
+    --sand:#e0cfa4;         /* parchment sand */
+    --ink:#1c1206;          /* dark ink on light surfaces */
+    --lightink:#f7f3ea;     /* light ink on dark surfaces */
+    --muted:#cbbd97;        /* muted sand text */
+    --accent:#3ac47d;       /* jungle leaf */
+    --accent2:#1ba6e0;      /* lagoon blue */
+    --fire:#ff8a00;         /* torch flame */
+    --bad:#ff6b6b;          /* error */
+    --grid:#2d4a3d;         /* subtle grid */
+    --rope:#c9a86a;         /* rope border */
+    --wood1:#6b3e1e;        /* wood gradient start */
+    --wood2:#90562a;        /* wood gradient end */
   }
+
   *{box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
   body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
-    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    margin:0; color:var(--lightink);
+    font:16px/1.6 Montserrat, system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    /* layered jungle night background */
+    background:
+      radial-gradient(1200px 700px at 80% -100px, rgba(27,166,224,.18), transparent 60%),
+      radial-gradient(1000px 600px at -10% 120%, rgba(58,196,125,.15), transparent 60%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
   }
-  @media (prefers-color-scheme: light){
-    body{ background: var(--lightbg); color: var(--lightink); }
-  }
+
   .wrap{max-width:720px;margin:0 auto;padding:1.25rem 1rem 5.5rem;}
-  header h1{margin:.1rem 0;font-size:clamp(1.4rem,5.6vw,2rem);}
-  header .sub{margin:0 0 .75rem;color:var(--muted);font-size:.95rem}
-  .card{
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:16px;
-    padding:0.9rem 1rem;
-    margin:0.75rem 0;
-    box-shadow:0 12px 28px rgba(0,0,0,.28)
+
+  /* Header with faux Survivor badge */
+  header{position:relative;text-align:center;margin:0 0 .5rem}
+  header h1{
+    margin:.25rem 0 .3rem;
+    font-family:"Cinzel Decorative", Georgia, serif;
+    letter-spacing:.03em;
+    font-size:clamp(1.6rem,5.6vw,2.2rem);
+    text-shadow:0 2px 0 rgba(0,0,0,.25), 0 6px 22px rgba(0,0,0,.35);
   }
-  .stage{display:none}.stage.active{display:block}
+  header::before{
+    content:"OUTWIT  •  OUTPLAY  •  OUTLAST";
+    display:inline-block;
+    margin:.25rem auto .35rem;
+    padding:.35rem .9rem;
+    font-weight:700; font-size:.78rem; letter-spacing:.18em;
+    color:#082314; background:linear-gradient(180deg,#f5e5be,#d9c28f);
+    border-radius:999px; border:2px solid rgba(0,0,0,.25);
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.25), 0 6px 18px rgba(0,0,0,.35);
+  }
 
-  /* Your original grid container */
-  .gridwrap{position:relative;width:100%;border-radius:14px;overflow:hidden;
-    border:1px solid rgba(255,255,255,.08)}
+  /* Cards become parchment panels with rope borders */
+  .card{
+    position:relative;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+                radial-gradient(600px 220px at 50% -10%, rgba(255,255,255,.08), transparent 60%);
+    border-radius:18px; padding:1rem 1rem; margin:.9rem 0;
+    box-shadow: 0 16px 35px rgba(0,0,0,.35);
+    border: 10px solid transparent; /* space for rope */
+    /* Rope border using border-image */
+    border-image: repeating-linear-gradient(
+      45deg,
+      var(--rope) 0 8px,
+      #b38e54 8px 16px
+    ) 10;
+  }
 
-  /* Your original generic grid (kept but visually under the plan sheet) */
+  .stage{display:none}
+  .stage.active{display:block}
+
+  /* Grid wrapper unchanged layout, new look */
+  .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
   .grid{position:absolute;inset:0;
     background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size: calc(100%/8) calc(100%/5)}
+
   .labels{position:absolute;inset:0;padding:.5rem}
   .labels .corner{position:absolute;top:.4rem;right:.6rem;color:var(--muted);font-size:.85rem}
-  .lbl{position:absolute;font-weight:800;font-size:clamp(20px,5.2vw,28px);user-select:none}
-  .hint{color:var(--muted);font-size:.95rem;margin-top:.5rem;display:none}
+  .lbl{position:absolute;font-weight:800;font-size:clamp(20px,5.2vw,28px);user-select:none;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 
-  /* UPDATED: three columns (lat, lon, button) */
-  .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.55rem;margin-top:.7rem}
-  input[type=text], input[type=number]{width:100%;padding:1rem .95rem;background:#0b0e13;color:var(--ink);
-    border:1px solid rgba(255,255,255,.12);border-radius:12px;outline:none;font-size:1rem;min-height:48px}
-  button{border:0;padding:1rem;border-radius:12px;font-weight:800;cursor:pointer;
-    background:linear-gradient(180deg, var(--accent2), #4a8fe0);color:#06101a;min-height:48px;font-size:1rem}
-  .mutebtn{background:#253044;color:var(--ink);}
-  .ok{color:var(--accent)} .bad{color:var(--bad)} .small{font-size:.92rem;color:var(--muted)}
+  /* Copy / microtext */
+  header .sub, .small{color:var(--muted)}
+  .ok{color:#7ef7b0}
+  .bad{color:var(--bad)}
   .pill{display:inline-block;padding:.2rem .6rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:var(--muted);font-size:.8rem;margin-right:.35rem}
   .flex{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
   .right{margin-left:auto}
-  .linkrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
-  .linkrow a{background:#253044;color:var(--ink);padding:.7rem .9rem;border-radius:12px;text-decoration:none;font-weight:650}
-  .reveal{opacity:0;transition:opacity .2s ease}
-  @media (prefers-color-scheme: dark){ .reveal{opacity:1} }
-  @media (prefers-color-scheme: light){ .reveal{opacity:.05} }
-  .greenscreen{position:fixed;inset:0;background:#16a34a;color:#052e12;display:none;align-items:center;justify-content:center;text-align:center}
-  .greenscreen.active{display:flex}
-  .greenscreen h2{font-size:clamp(1.8rem,7vw,3.2rem);margin:.5rem 0 0}
 
-  /* ---------- Fit the image to the box ---------- */
+  /* Inputs row preserved */
+  .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-top:.8rem}
+
+  /* Inputs: bamboo slots */
+  input[type=text], input[type=number]{
+    width:100%; min-height:48px;
+    padding:.9rem .95rem; font-size:1rem; outline:none;
+    color:#f4f0e4;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.28)),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 10px, rgba(0,0,0,.06) 10px 20px);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:12px;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+  }
+  input::placeholder{color:rgba(250,245,235,.6)}
+
+  /* Buttons: carved wood with lagoon highlight */
+  button{
+    border:0; min-height:48px; padding:1rem 1.1rem; font-weight:800; font-size:1rem; cursor:pointer;
+    color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.35);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.12)),
+      linear-gradient(180deg, var(--wood2), var(--wood1));
+    border-radius:12px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.15),
+      0 8px 18px rgba(0,0,0,.35),
+      0 0 0 3px rgba(27,166,224,.18);
+    transition: transform .04s ease, box-shadow .2s ease;
+  }
+  button:active{ transform: translateY(1px); }
+  .mutebtn{
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18)),
+      linear-gradient(180deg, #2a3a34, #1d2a25);
+    color:#dfe7dd; box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.35);
+  }
+
+  /* Link chips styled like driftwood tabs */
+  .linkrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
+  .linkrow a{
+    background:linear-gradient(180deg, #425248, #2a3a34);
+    color:#e6f3ef; padding:.7rem .95rem; border-radius:12px; text-decoration:none; font-weight:700;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.35);
+  }
+
+  /* Hidden message hint styling */
+  .hint{color:#e8dcbb;font-size:.95rem;margin-top:.5rem;display:none}
+  .hidden{display:none !important}
+
+  /* Reveal images respect box */
   #stage1 .gridwrap { max-height: 90vh; }
   #stage1 .gridwrap picture { display:block; width:100%; height:100%; }
   .plan-img { display:block; width:100%; height:100%; object-fit: contain; }
 
-  /* ---------- NEW: delayed hint button visibility ---------- */
-  .hidden{display:none !important;}
+  /* Greenscreen winner overlay -> Tribal Council flare */
+  .greenscreen{position:fixed;inset:0;background: radial-gradient(900px 500px at 50% 110%, rgba(255,138,0,.16), rgba(58,196,125,.08)), linear-gradient(180deg, #0b1410, #0f1d16); color:#f8f2e6; display:none; align-items:center; justify-content:center; text-align:center}
+  .greenscreen.active{display:flex}
+  .greenscreen h2{
+    font-family:"Cinzel Decorative", Georgia, serif;
+    font-size:clamp(1.9rem,7vw,3.2rem);
+    margin:.5rem 0 0;
+    text-shadow:0 2px 0 rgba(0,0,0,.25), 0 10px 28px rgba(0,0,0,.5), 0 0 22px rgba(255,138,0,.4);
+  }
+  .greenscreen .sub{color:#ffe6bf}
+
+  /* Subtle torch dividers inside cards */
+  .card h2{
+    margin:.2rem 0 .25rem; font-family:"Cinzel Decorative", Georgia, serif; letter-spacing:.02em;
+    text-shadow:0 2px 0 rgba(0,0,0,.25);
+  }
+  .card h2::after{
+    content:""; display:block; height:6px; margin:.45rem 0 .2rem;
+    background:
+      radial-gradient(6px 6px at 8px 3px, var(--fire), transparent 70%),
+      linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,0)),
+      linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.15));
+    border-radius:999px;
+  }
+
+  /* "Revealed in dark" effect retained */
+  .reveal{opacity:0;transition:opacity .2s ease}
+  @media (prefers-color-scheme: dark){ .reveal{opacity:1} }
+  @media (prefers-color-scheme: light){ .reveal{opacity:.05} }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <h1>Game Changers: Challenge #1</h1>
+    <h1>Game Changers: Immunity Challenge</h1>
+    <p class="sub">Welcome to Tribal Council of Puzzles — survive each stage to earn immunity.</p>
   </header>
 
-  <!-- Stage 1 -->
+  <!-- Stage 1 (structure unchanged) -->
   <section id="stage1" class="card stage active">
     <h2>Stage 1 — The Hidden Message</h2>
     <p class="small">Invisible in the light, but shining in the dark, coordinates will appear, when your settings hit the mark.</p>
@@ -102,9 +208,10 @@
         <source srcset="plan-dark.jpg" media="(prefers-color-scheme: dark)">
         <img src="plan-light.jpg" alt="Structural plan" class="plan-img">
       </picture>
+      <!-- (Grid left intact in case you choose to re-enable it) -->
+      <!-- <div class="grid reveal"></div> -->
     </div>
 
-    <!-- Inputs -->
     <div class="row">
       <input id="lat" type="number" step="any" placeholder="Latitude">
       <input id="lon" type="number" step="any" placeholder="Longitude">
@@ -115,7 +222,7 @@
     <div id="hint1" class="hint">Try switching your device to <strong>Dark Mode</strong>.</div>
   </section>
 
-  <!-- Stage 2 -->
+  <!-- Stage 2 (structure unchanged) -->
   <section id="stage2" class="card stage">
     <h2>Stage 2 — The M'app'-athon</h2>
     <p class="small">The ground once cracked where these coordinates lead — name the quake and the year of its deed.</p>
@@ -132,13 +239,14 @@
 
   <div id="green" class="greenscreen">
     <div>
-      <h2>Congratulations!</h2>
-      <p class="sub">You have completed the first challenge. Buzz in!</p>
+      <h2>Congratulations — You Have Immunity!</h2>
+      <p class="sub">You completed the challenge. The tribe cannot vote you out. 🔥</p>
     </div>
   </div>
 
 </div>
 
+<!-- Original JS (unchanged) -->
 <script>
 const CONFIG = {
   targetLat: 37.04,
@@ -159,35 +267,25 @@ function toggleHint(n){
 }
 function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
 
-/* --- NEW: start a 30s timer for the given stage's hint button --- */
 function startHintTimer(stageNumber){
-  // clear any previous timer
   if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
-  // hide both buttons first (safe reset)
   const b1 = document.getElementById("hintBtn1");
   const b2 = document.getElementById("hintBtn2");
   if (b1) b1.classList.add("hidden");
   if (b2) b2.classList.add("hidden");
-
   const targetBtn = document.getElementById(stageNumber === 1 ? "hintBtn1" : "hintBtn2");
   if (!targetBtn) return;
-
-  hintTimer = setTimeout(()=>{
-    targetBtn.classList.remove("hidden");
-  }, 30000); // 30,000 ms = 30 seconds
+  hintTimer = setTimeout(()=>{ targetBtn.classList.remove("hidden"); }, 30000);
 }
 
 function checkStage1(){
   const latVal = parseFloat(document.getElementById("lat").value);
   const lonVal = parseFloat(document.getElementById("lon").value);
   const msg = document.getElementById("msg1");
-
   if (isNaN(latVal) || isNaN(lonVal)){
     msg.textContent = "Enter both latitude and longitude.";
-    msg.className = "small bad";
-    return;
+    msg.className = "small bad"; return;
   }
-
   const ok = withinTolerance(latVal, CONFIG.targetLat, CONFIG.coordTolerance)
           && withinTolerance(lonVal, CONFIG.targetLon, CONFIG.coordTolerance);
   if (ok){
@@ -211,20 +309,15 @@ function checkStage2(){
   const rawName = document.getElementById("quakeName").value || "";
   const rawYear = document.getElementById("quakeYear").value || "";
   const msg = document.getElementById("msg2");
-
   const year = parseInt(rawYear, 10);
   const nameOnly = rawName.toLowerCase()
     .replace(/earthquake/g,"")
     .replace(/[^a-z\s]/g,"")
     .trim();
-
   const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
   const yearOk = (year === CONFIG.quake.year);
-
   if (nameOk && yearOk){
-    msg.textContent = "Correct!";
-    msg.className = "small ok";
-    setTimeout(()=>{ showGreen(); }, 300);
+    msg.textContent = "Correct!"; msg.className = "small ok"; setTimeout(()=>{ showGreen(); }, 300);
   } else {
     msg.className = "small bad";
     if (!nameOk && !yearOk) msg.textContent = "We need the quake name and the year.";
@@ -237,17 +330,15 @@ function showStage(id){
   document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   window.scrollTo({top:0,behavior:"smooth"});
-  // start the correct hint timer whenever a stage is shown
   if (id === "stage1") startHintTimer(1);
   if (id === "stage2") startHintTimer(2);
 }
 function showGreen(){
   document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
   document.getElementById("green").classList.add("active");
-  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; } // no hints on final
+  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
 }
 
-/* Start Stage 1 hint timer on first load */
 document.addEventListener("DOMContentLoaded", ()=> startHintTimer(1));
 </script>
 </body>

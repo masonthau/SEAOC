@@ -160,15 +160,19 @@
   .plan-img { display:block; width:100%; height:100%; object-fit: contain; }
 
   /* Greenscreen winner overlay -> Tribal Council flare */
-  .greenscreen{position:fixed;inset:0;background: radial-gradient(900px 500px at 50% 110%, rgba(255,138,0,.16), rgba(58,196,125,.08)), linear-gradient(180deg, #0b1410, #0f1d16); color:#f8f2e6; display:none; align-items:center; justify-content:center; text-align:center}
+  .greenscreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
+    background: linear-gradient(180deg, #25e07f 0%, #16a34a 60%, #11823b 100%);
+    color:#052e12;
+    box-shadow: inset 0 0 120px rgba(0,0,0,.25);
+  }
   .greenscreen.active{display:flex}
   .greenscreen h2{
     font-family:"Cinzel Decorative", Georgia, serif;
     font-size:clamp(1.9rem,7vw,3.2rem);
     margin:.5rem 0 0;
-    text-shadow:0 2px 0 rgba(0,0,0,.25), 0 10px 28px rgba(0,0,0,.5), 0 0 22px rgba(255,138,0,.4);
+    text-shadow:0 2px 0 rgba(255,255,255,.25), 0 8px 22px rgba(0,0,0,.45);
   }
-  .greenscreen .sub{color:#ffe6bf}
+  .greenscreen .sub{color:#0b3d22}
 
   /* Subtle torch dividers inside cards */
   .card h2{
@@ -194,14 +198,14 @@
 <div class="wrap">
 
   <header>
-    <h1>Survivor Coronado: Immunity Challenge</h1>
-    <p class="sub">Welcome to your first and final immunity challenge — complete each stage of puzzles to survive this round.</p>
+    <h1>Game Changers: Immunity Challenge</h1>
+    <p class="sub">Welcome to Tribal Council of Puzzles — survive each stage to earn immunity.</p>
   </header>
 
   <!-- Stage 1 (structure unchanged) -->
   <section id="stage1" class="card stage active">
     <h2>Stage 1 — The Hidden Message</h2>
-    <p class="small">Invisible in the light, but shining in the dark, coordinates will appear, when your phone settings hit the mark.</p>
+    <p class="small">Invisible in the light, but shining in the dark, coordinates will appear, when your settings hit the mark.</p>
 
     <div class="gridwrap">
       <picture>

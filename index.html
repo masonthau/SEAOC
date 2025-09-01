@@ -3,6 +3,211 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0f14">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8ff">
+<title>Structural QR Puzzle</title>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --ink:#e9f0fb;
+    --muted:#9db0c8;
+    --accent:#7bd389;
+    --accent2:#82b1ff;
+    --bad:#ff7474;
+    --grid:#2a3342;
+    --lightbg:#f6f8ff;
+    --lightink:#0e1320;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+  }
+  @media (prefers-color-scheme: light){
+    body{ background: var(--lightbg); color: var(--lightink); }
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:1.25rem 1rem 5.5rem;}
+  header h1{margin:.1rem 0;font-size:clamp(1.4rem,5.6vw,2rem);}
+  header .sub{margin:0 0 .75rem;color:var(--muted);font-size:.95rem}
+  .card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;
+    padding:0.9rem 1rem;
+    margin:0.75rem 0;
+    box-shadow:0 12px 28px rgba(0,0,0,.28)
+  }
+  .stage{display:none}.stage.active{display:block}
+  .gridwrap{position:relative;aspect-ratio:1.2/1;width:100%;border-radius:14px;overflow:hidden;
+    border:1px solid rgba(255,255,255,.08)}
+  .grid{position:absolute;inset:0;
+    background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: calc(100%/8) calc(100%/5)}
+  .labels{position:absolute;inset:0;padding:.5rem}
+  .labels .corner{position:absolute;top:.4rem;right:.6rem;color:var(--muted);font-size:.85rem}
+  .lbl{position:absolute;font-weight:800;font-size:clamp(20px,5.2vw,28px);user-select:none}
+  .hint{color:var(--muted);font-size:.95rem;margin-top:.5rem;display:none}
+  .row{display:grid;grid-template-columns:1fr auto;gap:.55rem;margin-top:.7rem}
+  input[type=text]{width:100%;padding:1rem .95rem;background:#0b0e13;color:var(--ink);
+    border:1px solid rgba(255,255,255,.12);border-radius:12px;outline:none;font-size:1rem;min-height:48px}
+  button{border:0;padding:1rem;border-radius:12px;font-weight:800;cursor:pointer;
+    background:linear-gradient(180deg, var(--accent2), #4a8fe0);color:#06101a;min-height:48px;font-size:1rem}
+  .mutebtn{background:#253044;color:var(--ink);}
+  .ok{color:var(--accent)} .bad{color:var(--bad)} .small{font-size:.92rem;color:var(--muted)}
+  .pill{display:inline-block;padding:.2rem .6rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:var(--muted);font-size:.8rem;margin-right:.35rem}
+  .flex{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+  .right{margin-left:auto}
+  .linkrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
+  .linkrow a{background:#253044;color:var(--ink);padding:.7rem .9rem;border-radius:12px;text-decoration:none;font-weight:650}
+  .reveal{opacity:0;transition:opacity .2s ease}
+  @media (prefers-color-scheme: dark){ .reveal{opacity:1} }
+  @media (prefers-color-scheme: light){ .reveal{opacity:.05} }
+  .greenscreen{position:fixed;inset:0;background:#16a34a;color:#052e12;display:none;align-items:center;justify-content:center;text-align:center}
+  .greenscreen.active{display:flex}
+  .greenscreen h2{font-size:clamp(1.8rem,7vw,3.2rem);margin:.5rem 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Structural QR Puzzle</h1>
+    <p class="sub">Stage 1 hides in plain sight. Stage 2 sends you to an epicenter. Type the right answers to advance.</p>
+    <div class="pill">Mobile-friendly</div><div class="pill">No sign-in</div><div class="pill">~5 minutes</div>
+  </header>
+
+  <!-- Stage 1 -->
+  <section id="stage1" class="card stage active">
+    <h2>Stage 1 — Gridline Secret</h2>
+    <p class="small">Switch your phone to Dark Mode to see hidden digits. Read left → right.</p>
+    <div class="gridwrap">
+      <div class="grid"></div>
+      <div class="labels">
+        <div class="corner">Plan A · Level 3</div>
+        <div class="lbl reveal" style="top:12%; left:6%;">3</div>
+        <div class="lbl reveal" style="top:12%; left:16%;">7</div>
+        <div class="lbl reveal" style="top:12%; left:26%;">.</div>
+        <div class="lbl reveal" style="top:12%; left:32%;">0</div>
+        <div class="lbl reveal" style="top:12%; left:42%;">4</div>
+        <div class="lbl reveal" style="top:58%; left:12%;">-</div>
+        <div class="lbl reveal" style="top:58%; left:18%;">1</div>
+        <div class="lbl reveal" style="top:58%; left:28%;">2</div>
+        <div class="lbl reveal" style="top:58%; left:38%;">1</div>
+        <div class="lbl reveal" style="top:58%; left:48%;">.</div>
+        <div class="lbl reveal" style="top:58%; left:54%;">8</div>
+        <div class="lbl reveal" style="top:58%; left:62%;">8</div>
+      </div>
+    </div>
+    <div class="row">
+      <input id="ans1" type="text" placeholder="37.04, -121.88">
+      <button onclick="checkStage1()">Submit</button>
+    </div>
+    <div id="msg1" class="small"></div>
+    <button class="mutebtn" onclick="toggleHint(1)">Hint</button>
+    <div id="hint1" class="hint">Try switching to <strong>Dark Mode</strong>.</div>
+  </section>
+
+  <!-- Stage 2 -->
+  <section id="stage2" class="card stage">
+    <h2>Stage 2 — Name the Quake</h2>
+    <p class="small">Open the coordinates in your maps app. Enter the quake <em>name</em> and <em>year</em>.</p>
+    <div class="linkrow" id="mapLinks"></div>
+    <div class="row">
+      <input id="ans2" type="text" placeholder="e.g., Loma Prieta 1989">
+      <button onclick="checkStage2()">Submit</button>
+    </div>
+    <div id="msg2" class="small"></div>
+    <button class="mutebtn" onclick="toggleHint(2)">Hint</button>
+    <div id="hint2" class="hint">Format: “Name Year” (e.g., Northridge 1994).</div>
+  </section>
+
+  <div id="green" class="greenscreen">
+    <div>
+      <h2>Congratulations! Buzz in!</h2>
+      <p class="sub">Tell us your answer at the buzzer.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CONFIG = {
+  targetLat: 37.04,
+  targetLon: -121.88,
+  coordTolerance: 0.01,
+  quake: {
+    names: ["loma prieta"],
+    year: 1989
+  }
+};
+
+const $ = s => document.querySelector(s);
+function toggleHint(n){
+  const el = document.querySelector("#hint"+n);
+  el.style.display = (el.style.display === "block" ? "none" : "block");
+}
+
+function parseTwoNumbers(str){
+  const nums = (str.match(/[-+]?\\d*\\.?\\d+/g) || []).map(Number).filter(x => !isNaN(x));
+  return nums.length >= 2 ? [nums[0], nums[1]] : null;
+}
+function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
+
+function checkStage1(){
+  const pair = parseTwoNumbers($("#ans1").value);
+  if (!pair){ $("#msg1").textContent = "Enter two numbers (lat, lon)."; $("#msg1").className="small bad"; return; }
+  const [lat, lon] = pair;
+  const ok = withinTolerance(lat, CONFIG.targetLat, CONFIG.coordTolerance)
+          && withinTolerance(lon, CONFIG.targetLon, CONFIG.coordTolerance);
+  if (ok){
+    $("#msg1").textContent = "Correct! Proceeding…"; $("#msg1").className="small ok";
+    setTimeout(()=>{ showStage("stage2"); renderMapLinks(CONFIG.targetLat, CONFIG.targetLon); },400);
+  } else { $("#msg1").textContent = "Not quite. Try again."; $("#msg1").className="small bad"; }
+}
+
+function renderMapLinks(lat, lon){
+  const wrap = $("#mapLinks"); wrap.innerHTML="";
+  const g = document.createElement("a");
+  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`; g.target="_blank"; g.textContent="Google Maps";
+  const a = document.createElement("a");
+  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`; a.target="_blank"; a.textContent="Apple Maps";
+  wrap.appendChild(g); wrap.appendChild(a);
+}
+
+function checkStage2(){
+  const raw = $("#ans2").value.toLowerCase();
+  const yearMatch = raw.match(/(19|20)\\d{2}/);
+  const year = yearMatch ? parseInt(yearMatch[0]) : null;
+  let nameOnly = raw.replace(/earthquake/g,"").replace(/\\d{4}/g,"").trim();
+  const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
+  const yearOk = (year === CONFIG.quake.year);
+  if (nameOk && yearOk){
+    $("#msg2").textContent="Correct!"; $("#msg2").className="small ok";
+    setTimeout(()=>{ showGreen(); },350);
+  } else { $("#msg2").textContent="Check name and year."; $("#msg2").className="small bad"; }
+}
+
+function showStage(id){
+  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function showGreen(){
+  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
+  document.getElementById("green").classList.add("active");
+}
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Structural QR Puzzle</title>
 <style>
   body {

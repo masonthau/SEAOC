@@ -6,132 +6,75 @@
 <meta name="color-scheme" content="light dark">
 <title>Game Changers: Immunity Challenge</title>
 
-<!-- Optional themed web fonts (safe fallbacks provided) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
   /* =======================================================
-     SURVIVOR THEME — purely visual changes (no layout/logic)
+     SURVIVOR THEME (outer chrome)
      ======================================================= */
   :root{
-    /* Jungle / island palette */
-    --bg: #0c1a14;          /* deep jungle green */
-    --bg2:#0e231a;          /* slightly lighter jungle */
-    --sand:#e0cfa4;         /* parchment sand */
-    --ink:#1c1206;          /* dark ink on light surfaces */
-    --lightink:#f7f3ea;     /* light ink on dark surfaces */
-    --muted:#cbbd97;        /* muted sand text */
-    --accent:#3ac47d;       /* jungle leaf */
-    --accent2:#1ba6e0;      /* lagoon blue */
-    --fire:#ff8a00;         /* torch flame */
-    --bad:#ff6b6b;          /* error */
-    --grid:#2d4a3d;         /* subtle grid */
-    --rope:#c9a86a;         /* rope border */
-    --wood1:#6b3e1e;        /* wood gradient start */
-    --wood2:#90562a;        /* wood gradient end */
+    --bg:#0c1a14; --bg2:#0e231a;
+    --sand:#e0cfa4; --ink:#1c1206; --lightink:#f7f3ea; --muted:#cbbd97;
+    --accent:#3ac47d; --accent2:#1ba6e0; --fire:#ff8a00; --bad:#ff6b6b;
+    --grid:#2d4a3d; --rope:#c9a86a; --wood1:#6b3e1e; --wood2:#90562a;
   }
-
-  *{box-sizing:border-box;-webkit-tap-highlight-color: transparent;}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
     margin:0; color:var(--lightink);
     font:16px/1.6 Montserrat, system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-    /* layered jungle night background */
     background:
       radial-gradient(1200px 700px at 80% -100px, rgba(27,166,224,.18), transparent 60%),
       radial-gradient(1000px 600px at -10% 120%, rgba(58,196,125,.15), transparent 60%),
       linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
   }
+  .wrap{max-width:720px;margin:0 auto;padding:1.25rem 1rem 5.5rem}
 
-  .wrap{max-width:720px;margin:0 auto;padding:1.25rem 1rem 5.5rem;}
-
-  /* Header with faux Survivor badge */
-  header{position:relative;text-align:center;margin:0 0 .5rem}
+  header{text-align:center;margin:0 0 .5rem}
   header h1{
-    margin:.25rem 0 .3rem;
-    font-family:"Cinzel Decorative", Georgia, serif;
-    letter-spacing:.03em;
-    font-size:clamp(1.6rem,5.6vw,2.2rem);
+    margin:.25rem 0 .3rem; font-family:"Cinzel Decorative", Georgia, serif;
+    letter-spacing:.03em; font-size:clamp(1.6rem,5.6vw,2.2rem);
     text-shadow:0 2px 0 rgba(0,0,0,.25), 0 6px 22px rgba(0,0,0,.35);
   }
   header::before{
     content:"OUTWIT  •  OUTPLAY  •  OUTLAST";
-    display:inline-block;
-    margin:.25rem auto .35rem;
-    padding:.35rem .9rem;
+    display:inline-block; margin:.25rem auto .35rem; padding:.35rem .9rem;
     font-weight:700; font-size:.78rem; letter-spacing:.18em;
     color:#082314; background:linear-gradient(180deg,#f5e5be,#d9c28f);
     border-radius:999px; border:2px solid rgba(0,0,0,.25);
     box-shadow:inset 0 0 0 2px rgba(255,255,255,.25), 0 6px 18px rgba(0,0,0,.35);
   }
 
-  /* Cards become parchment panels with rope borders */
   .card{
-    position:relative;
-    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-                radial-gradient(600px 220px at 50% -10%, rgba(255,255,255,.08), transparent 60%);
+    position:relative; background:
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+      radial-gradient(600px 220px at 50% -10%, rgba(255,255,255,.08), transparent 60%);
     border-radius:18px; padding:1rem 1rem; margin:.9rem 0;
-    box-shadow: 0 16px 35px rgba(0,0,0,.35);
-    border: 10px solid transparent; /* space for rope */
-    /* Rope border using border-image */
-    border-image: repeating-linear-gradient(
-      45deg,
-      var(--rope) 0 8px,
-      #b38e54 8px 16px
-    ) 10;
+    box-shadow:0 16px 35px rgba(0,0,0,.35);
+    border:10px solid transparent;
+    border-image:repeating-linear-gradient(45deg, var(--rope) 0 8px, #b38e54 8px 16px) 10;
   }
-
   .stage{display:none}
   .stage.active{display:block}
 
-  /* Grid wrapper unchanged layout, new look */
-  .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
-  .grid{position:absolute;inset:0;
-    background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: calc(100%/8) calc(100%/5)}
-
-  .labels{position:absolute;inset:0;padding:.5rem}
-  .labels .corner{position:absolute;top:.4rem;right:.6rem;color:var(--muted);font-size:.85rem}
-  .lbl{position:absolute;font-weight:800;font-size:clamp(20px,5.2vw,28px);user-select:none;text-shadow:0 2px 0 rgba(0,0,0,.25)}
-
-  /* Copy / microtext */
   header .sub, .small{color:var(--muted)}
-  .ok{color:#7ef7b0}
-  .bad{color:var(--bad)}
-  .pill{display:inline-block;padding:.2rem .6rem;border:1px solid rgba(255,255,255,.15);border-radius:999px;color:var(--muted);font-size:.8rem;margin-right:.35rem}
-  .flex{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-  .right{margin-left:auto}
-
-  /* Inputs row preserved */
+  .ok{color:#7ef7b0} .bad{color:var(--bad)}
   .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-top:.8rem}
 
-  /* Stage 2 override: name on its own line, then year + submit together */
-  #stage2 .row{
-    display:grid;
-    grid-template-columns: 1fr auto;
-    gap:.6rem;
-    margin-top:.8rem;
-  }
-  #stage2 .row:first-of-type{
-    grid-template-columns:1fr; /* full-width for the EQ Name input */
-  }
+  /* Stage 3 stacked inputs */
+  #stage3 .row{grid-template-columns:1fr auto}
+  #stage3 .row:first-of-type{grid-template-columns:1fr}
 
-  /* Inputs: bamboo slots */
   input[type=text], input[type=number]{
-    width:100%; min-height:48px;
-    padding:.9rem .95rem; font-size:1rem; outline:none;
-    color:#f4f0e4;
+    width:100%; min-height:48px; padding:.9rem .95rem; font-size:1rem; outline:none; color:#f4f0e4;
     background:
       linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.28)),
       repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 10px, rgba(0,0,0,.06) 10px 20px);
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:12px;
-    box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.18); border-radius:12px; box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
   }
   input::placeholder{color:rgba(250,245,235,.6)}
 
-  /* Buttons: carved wood with lagoon highlight */
   button{
     border:0; min-height:48px; padding:1rem 1.1rem; font-weight:800; font-size:1rem; cursor:pointer;
     color:#fff; text-shadow:0 1px 0 rgba(0,0,0,.35);
@@ -139,21 +82,17 @@
       linear-gradient(180deg, rgba(255,255,255,.12), rgba(0,0,0,.12)),
       linear-gradient(180deg, var(--wood2), var(--wood1));
     border-radius:12px;
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.15),
-      0 8px 18px rgba(0,0,0,.35),
-      0 0 0 3px rgba(27,166,224,.18);
-    transition: transform .04s ease, box-shadow .2s ease;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.15), 0 8px 18px rgba(0,0,0,.35), 0 0 0 3px rgba(27,166,224,.18);
+    transition:transform .04s ease, box-shadow .2s ease;
   }
-  button:active{ transform: translateY(1px); }
+  button:active{transform:translateY(1px)}
   .mutebtn{
     background:
       linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18)),
       linear-gradient(180deg, #2a3a34, #1d2a25);
-    color:#dfe7dd; box-shadow: inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.35);
+    color:#dfe7dd; box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.35);
   }
 
-  /* Link chips styled like driftwood tabs */
   .linkrow{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
   .linkrow a{
     background:linear-gradient(180deg, #425248, #2a3a34);
@@ -161,48 +100,139 @@
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.1), 0 6px 14px rgba(0,0,0,.35);
   }
 
-  /* Hidden message hint styling */
   .hint{color:#e8dcbb;font-size:.95rem;margin-top:.5rem;display:none}
   .hidden{display:none !important}
 
-  /* Reveal images respect box */
-  #stage1 .gridwrap { max-height: 90vh; }
-  #stage1 .gridwrap picture { display:block; width:100%; height:100%; }
-  .plan-img { display:block; width:100%; height:100%; object-fit: contain; }
+  /* Report (Stage 2) */
+  .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+  .report{
+    background:#fff; color:#222; padding:16px 14px; min-height:60vh;
+    font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  }
+  .report h3{margin:0 0 8px 0; font-size:18px}
+  .report .meta{color:#556; font-size:12px; margin-bottom:10px}
+  .report .sec{margin-top:12px}
+  .report .sec h4{margin:0 0 6px 0; font-size:15px}
+  .report .sec p{margin:0 0 8px 0}
+  .report table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px}
+  .report th,.report td{border:1px solid #e4e6ea; padding:6px 8px; text-align:left}
+  .report tfoot td{font-size:12px; color:#667}
+  .coord{color:#fff; user-select:none}
+  @media (prefers-color-scheme: dark){
+    .coord{color:#ff4a4a; font-weight:800}
+  }
 
-  /* Greenscreen winner overlay -> Tribal Council flare */
   .greenscreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
-    background: linear-gradient(180deg, #25e07f 0%, #16a34a 60%, #11823b 100%);
-    color:#052e12;
-    box-shadow: inset 0 0 120px rgba(0,0,0,.25);
-  }
+    background:linear-gradient(180deg, #25e07f 0%, #16a34a 60%, #11823b 100%); color:#052e12; box-shadow:inset 0 0 120px rgba(0,0,0,.25)}
   .greenscreen.active{display:flex}
-  .greenscreen h2{
-    font-family:"Cinzel Decorative", Georgia, serif;
-    font-size:clamp(1.9rem,7vw,3.2rem);
-    margin:.5rem 0 0;
-    text-shadow:0 2px 0 rgba(255,255,255,.25), 0 8px 22px rgba(0,0,0,.45);
-  }
+  .greenscreen h2{font-family:"Cinzel Decorative", Georgia, serif; font-size:clamp(1.9rem,7vw,3.2rem); margin:.5rem 0 0;
+    text-shadow:0 2px 0 rgba(255,255,255,.25), 0 8px 22px rgba(0,0,0,.45)}
   .greenscreen .sub{color:#0b3d22}
 
-  /* Subtle torch dividers inside cards */
-  .card h2{
-    margin:.2rem 0 .25rem; font-family:"Cinzel Decorative", Georgia, serif; letter-spacing:.02em;
-    text-shadow:0 2px 0 rgba(0,0,0,.25);
+  /* =======================================================
+     LINKEDIN MOBILE OVERLAY (polished)
+     ======================================================= */
+  :root{
+    --ln-blue:#0a66c2; --ln-ink:#1f2328; --ln-muted:#666d76; --ln-bg:#f3f2ef; --ln-card:#fff; --ln-border:#e0e3e7;
   }
-  .card h2::after{
-    content:""; display:block; height:6px; margin:.45rem 0 .2rem;
-    background:
-      radial-gradient(6px 6px at 8px 3px, var(--fire), transparent 70%),
-      linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,0)),
-      linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.15));
-    border-radius:999px;
+  .linkedin-app{
+    position:fixed; inset:0; background:var(--ln-bg); color:var(--ln-ink);
+    font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    display:none; flex-direction:column;
   }
+  .linkedin-app.active{display:flex}
 
-  /* "Revealed in dark" effect retained */
-  .reveal{opacity:0;transition:opacity .2s ease}
-  @media (prefers-color-scheme: dark){ .reveal{opacity:1} }
-  @media (prefers-color-scheme: light){ .reveal{opacity:.05} }
+  .linkedin-app button{color:var(--ln-ink); text-shadow:none; background:#fff}
+  .linkedin-app .ln-btn.primary{color:#fff; background:var(--ln-blue); border-color:transparent}
+
+  .ln-topbar{
+    position:sticky; top:0; z-index:7; height:56px; background:var(--ln-blue); color:#fff;
+    display:flex; align-items:center; gap:10px; padding:0 12px;
+  }
+  #lnBack{display:none; border:0}
+  .ln-backbig{
+    display:flex; align-items:center; gap:8px; background:#fff; color:#0a66c2; border:1px solid #d3e3ff;
+    padding:6px 12px; border-radius:999px; font-weight:800;
+  }
+  .ln-badge{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:4px;background:#fff;color:var(--ln-blue);font-weight:800}
+  .ln-search{flex:1;display:flex;align-items:center;gap:8px;background:#eaf3fe;border-radius:6px;padding:6px 10px}
+  .ln-search input{flex:1;border:0;outline:none;background:transparent;font:inherit; color:#111}
+
+  /* Toast */
+  .ln-toast{
+    position:fixed; left:12px; right:12px; top:64px; z-index:8;
+    background:#fff; border:1px solid #ffd6d6; color:#7a2121;
+    box-shadow:0 6px 18px rgba(0,0,0,.08); border-radius:10px; padding:10px 12px;
+    display:none; font-weight:700;
+  }
+  .ln-toast.show{display:block; animation:toastfade .25s ease}
+  @keyframes toastfade{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
+
+  /* Mission banner */
+  .ln-taskbar{
+    position:sticky; top:56px; z-index:6;
+    background:#fff; border-bottom:1px solid var(--ln-border);
+    padding:10px 12px; font-weight:800; display:flex; align-items:center; gap:8px;
+  }
+  .ln-taskbar .tag{background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700}
+
+  .ln-screen{flex:1; overflow:auto; -webkit-overflow-scrolling:touch}
+  .ln-card{background:#fff;border:1px solid var(--ln-border);border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.05); overflow:hidden; margin:12px}
+  .ln-pad{padding:12px}
+  .ln-meta{color:var(--ln-muted); font-size:12px}
+
+  /* Profile header */
+  .ln-cover{height:96px;background:linear-gradient(135deg,#dfeafb,#d5f2ea)}
+  .ln-ava{
+    width:74px;height:74px;border-radius:50%;
+    background:#fff; display:grid; place-items:center; margin-top:-40px;
+    box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 3px #fff, 0 0 0 5px #dfe9f7;
+  }
+  .ln-ava .emo{font-size:32px; line-height:1}
+  .ln-head{display:flex; gap:12px; align-items:flex-end}
+  .ln-name{font-weight:800; font-size:18px}
+  .ln-headline{color:#6b7480; font-size:13px}
+  .ln-buttons{display:flex; gap:8px; margin-top:8px}
+  .ln-btn{border:1px solid var(--ln-border); padding:8px 12px; border-radius:999px; font-weight:700; font-size:13px; background:#fff}
+  .ln-more{border-radius:999px}
+
+  .ln-section-title{font-weight:800; margin:10px 12px 0 12px}
+  .ln-section{background:#fff; border-top:1px solid var(--ln-border); padding:10px 12px}
+
+  /* Result-row aesthetic */
+  .ln-result{display:flex; gap:12px; padding:14px 0; border-top:1px solid var(--ln-border); text-align:left; background:#fff}
+  .ln-result:first-child{border-top:0}
+  .ln-miniava{
+    width:48px;height:48px;border-radius:50%; background:#fff; display:grid; place-items:center; flex:0 0 48px;
+    box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 2px #fff, 0 0 0 3px #e9eef7;
+  }
+  .ln-miniava .emo{font-size:24px; line-height:1}
+  .ln-result .label{min-width:0}
+  .ln-result .name{font-weight:700; font-size:15px; color:#0a2540}
+  .ln-result .headline{font-size:13px;color:#434a54}
+  .ln-result .loc{font-size:12px;color:#6b7480; margin-top:2px}
+  .ln-result .smallrow{display:flex; gap:8px; align-items:center; color:#6b7480; font-size:12px; margin-top:4px}
+  .ln-result svg{vertical-align:-2px}
+
+  /* Bottom tabs */
+  .ln-bottom{
+    height:54px; background:#fff; border-top:1px solid var(--ln-border);
+    display:flex; align-items:center; justify-content:space-around;
+  }
+  .ln-tab{font-size:12px; color:#5a646e; padding:6px 10px; border-radius:8px}
+  .ln-tab:hover{background:#f6f8fb}
+
+  .ln-sheet{
+    position:fixed; left:0; right:0; bottom:0; background:#fff; border-top-left-radius:14px; border-top-right-radius:14px;
+    box-shadow:0 -10px 30px rgba(0,0,0,.15); transform:translateY(110%); transition:transform .22s ease; padding:16px; z-index:10;
+  }
+  .ln-sheet.active{transform:translateY(0%)}
+  .ln-sheet h3{margin:0 0 6px 0} .ln-sheet p{margin:0 0 12px 0; color:#888}
+
+  .ln-open-btn{background:#0a66c2; color:#fff; border:0; border-radius:999px; font-weight:800; min-height:48px; padding:.9rem 1.2rem; box-shadow:none}
+
+  .lazy-connections{opacity:0; transform:translateY(8px); transition:opacity .25s ease, transform .25s ease}
+  .lazy-connections.visible{opacity:1; transform:none}
 </style>
 </head>
 <body>
@@ -213,48 +243,116 @@
     <p class="sub">Welcome to your first and final immunity challenge — complete each stage of puzzles to survive this round.</p>
   </header>
 
-  <!-- Stage 1 (structure unchanged) -->
+  <!-- =========================
+       STAGE 1 — LinkedIn intro
+       ========================= -->
   <section id="stage1" class="card stage active">
-    <h2>Stage 1 — The Hidden Message</h2>
-    <p class="small">Invisible in the light, but shining in the dark, coordinates will appear, when your phone settings hit the mark.</p>
+    <h2>Stage 1 — Connection Web</h2>
+    <p class="small">
+      You’re a <strong>Structural Engineer (3 yrs)</strong> who’s just taken on a major role in your company’s sustainability committee.
+      Your mission is to <strong>find a sustainability expert and connect with them</strong> to kick off a building LCA case study.
+    </p>
+    <div class="row" style="grid-template-columns:1fr;">
+      <button class="ln-open-btn" onclick="openLinkedIn()" aria-label="Open LinkedIn style puzzle">Open LinkedIn</button>
+    </div>
+  </section>
+
+  <!-- =========================
+       STAGE 2 — LCA report reveal
+       ========================= -->
+  <section id="stage2" class="card stage">
+    <h2>Stage 2 — The Hidden Message</h2>
+    <p class="small">Invisible in the light, but shining in the dark — coordinates appear when your phone enters <strong>Dark Mode</strong>. Gather them and enter below.</p>
 
     <div class="gridwrap">
-      <picture>
-        <source srcset="plan-dark.jpg" media="(prefers-color-scheme: dark)">
-        <img src="plan-light.jpg" alt="Structural plan" class="plan-img">
-      </picture>
+      <div class="report" role="article" aria-label="LCA Case Study Report">
+        <h3>Life Cycle Assessment (LCA) — Case Study: Harbor Offices</h3>
+        <div class="meta">Prepared by: EcoMetrics Studio • Version 1.2 • Date: 2024-11-15<span class="coord" aria-hidden="true">37</span></div>
+
+        <div class="sec">
+          <h4>Executive Summary</h4>
+          <p>
+            The Harbor Offices project achieved a significant reduction in embodied carbon for the structural package relative to a 2018 baseline.
+            Strategies included concrete mix optimization (lower clinker content), higher SCM substitution, and shift to Grade 60 reinforcement with
+            mill EPDs. Modeled cradle-to-gate impacts follow EN 15804+A2 and ISO 14044<span class="coord" aria-hidden="true">.0</span>
+          </p>
+        </div>
+
+        <div class="sec">
+          <h4>Goal & Scope</h4>
+          <p>
+            The goal is to quantify embodied carbon (GWP100) for structure and envelope at Design Development. The scope covers modules A1–A3, with placeholders for A4 and A5. Results are reported per m² GFA and per 60-year service life<span class="coord" aria-hidden="true">4</span>.
+          </p>
+        </div>
+
+        <div class="sec">
+          <h4>Data & Assumptions</h4>
+          <p>
+            Primary data were collected from the design team and suppliers; secondary data use Ecoinvent v3.8 and manufacturer EPDs. Transportation uses regional averages with sensitivity runs for marine and rail<span class="coord" aria-hidden="true">, </span>
+          </p>
+        </div>
+
+        <div class="sec">
+          <h4>Results (A1–A3)</h4>
+          <table>
+            <thead><tr><th>Package</th><th>GWP (kgCO₂e/m²)</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Concrete</td><td>153</td><td>CEM II/A + SCM, 30% slag</td></tr>
+              <tr><td>Rebar</td><td>42</td><td>EAF route, recycled content 95%</td></tr>
+              <tr><td>Structural Steel</td><td>27</td><td>EAF route, mill certificates</td></tr>
+              <tr><td>Cladding</td><td>61</td><td>Aluminum composite, supplier EPD</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">Total modeled GWP (structure+envelope, DD): 283 kgCO₂e/m²<span class="coord" aria-hidden="true">-121</span></td></tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="sec">
+          <h4>Verification</h4>
+          <p>
+            Results were reviewed against PCR requirements and cross-checked with third-party EPDs for major materials. Uncertainty is driven by cement content and transport distance variability<span class="coord" aria-hidden="true">.</span>
+          </p>
+        </div>
+
+        <div class="sec">
+          <h4>References</h4>
+          <p>
+            EN 15804+A2 (2019); ISO 14040/44; CLF MEP/Structure guidance v2.1; Manufacturer EPD databases<span class="coord" aria-hidden="true">88</span>
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="row">
       <input id="lat" type="number" step="any" placeholder="Latitude">
       <input id="lon" type="number" step="any" placeholder="Longitude">
-      <button onclick="checkStage1()">Submit</button>
+      <button onclick="checkStage2()">Submit</button>
     </div>
-    <div id="msg1" class="small"></div>
-    <button id="hintBtn1" class="mutebtn hidden" onclick="toggleHint(1)">Hint</button>
-    <div id="hint1" class="hint">Try switching your device to <strong>Dark Mode</strong>.</div>
+    <div id="msg2" class="small"></div>
+    <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
+    <div id="hint2" class="hint">Switch your device to <strong>Dark Mode</strong> and scan the report top-to-bottom.</div>
   </section>
 
-  <!-- Stage 2 (updated layout only) -->
-  <section id="stage2" class="card stage">
-    <h2>Stage 2 — The M'app'athon</h2>
-    <p class="small">The ground once cracked where these coordinates lead — name the quake and the year of its deed.</p>
+  <!-- =========================
+       STAGE 3 — Earthquake
+       ========================= -->
+  <section id="stage3" class="card stage">
+    <h2>Stage 3 — The M'app'athon</h2>
+    <p class="small">Place the coordinates on a map — then name the quake and year.</p>
     <div class="linkrow" id="mapLinks"></div>
 
-    <!-- Name on its own full-width row -->
     <div class="row">
       <input id="quakeName" type="text" placeholder="EQ Name">
     </div>
-
-    <!-- Year + Submit on the same row -->
     <div class="row">
       <input id="quakeYear" type="number" inputmode="numeric" step="1" placeholder="Year">
-      <button id="btn2" type="button" onclick="checkStage2()">Submit</button>
+      <button id="btn3" type="button" onclick="checkStage3()">Submit</button>
     </div>
 
-    <div id="msg2" class="small" style="margin-top:.4rem;"></div>
-    <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
-    <div id="hint2" class="hint">Use your maps app to place these coordinates, which show the epicenter of a famous earthquake.</div>
+    <div id="msg3" class="small" style="margin-top:.4rem;"></div>
+    <button id="hintBtn3" class="mutebtn hidden" onclick="toggleHint(3)">Hint</button>
+    <div id="hint3" class="hint">Use your maps app with the coordinates; the epicenter belongs to a well-known Bay Area quake.</div>
   </section>
 
   <div id="green" class="greenscreen">
@@ -266,16 +364,54 @@
 
 </div>
 
-<!-- Original JS (unchanged) -->
+<!-- =======================================================
+     LINKEDIN MOBILE OVERLAY
+     ======================================================= -->
+<div id="linkedinApp" class="linkedin-app" aria-hidden="true">
+  <div class="ln-topbar">
+    <button id="lnBack" class="ln-backbig" aria-label="Back">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0a66c2" d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      <span>Back</span>
+    </button>
+    <span class="ln-badge" aria-hidden="true">in</span>
+    <div class="ln-search" role="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#426aa8" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5L20.5 19l-5-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input id="lnSearch" type="text" placeholder="Search" autocomplete="off" />
+    </div>
+  </div>
+
+  <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability expert — check their connections.</div>
+
+  <div class="ln-taskbar">
+    <span class="tag">Mission</span> Find a <strong>sustainability expert</strong> and <strong>connect</strong> with them
+  </div>
+
+  <div id="lnScreens" class="ln-screen" tabindex="0" aria-live="polite"></div>
+
+  <div class="ln-bottom" aria-hidden="true">
+    <div class="ln-tab">Home</div><div class="ln-tab">My Network</div><div class="ln-tab">Post</div><div class="ln-tab">Notifications</div><div class="ln-tab">Jobs</div>
+  </div>
+
+  <div id="lnSheet" class="ln-sheet" role="dialog" aria-modal="true" aria-labelledby="lnSheetTitle" aria-describedby="lnSheetDesc">
+    <h3 id="lnSheetTitle">Success! Consultant Connected</h3>
+    <p id="lnSheetDesc">The consultant agrees to share a case study LCA report to kickstart your project.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="ln-btn" id="lnExploreAgain">Explore Again</button>
+      <button class="ln-btn primary" id="lnProceed">Open LCA Report</button>
+      <button class="ln-btn" id="lnClose">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* ===============================
+   GAME CONFIG / HELPERS
+   =============================== */
 const CONFIG = {
   targetLat: 37.04,
   targetLon: -121.88,
   coordTolerance: 0.01,
-  quake: {
-    names: ["loma prieta"],
-    year: 1989
-  }
+  quake: { names:["loma prieta"], year:1989 }
 };
 
 const $ = s => document.querySelector(s);
@@ -289,19 +425,34 @@ function withinTolerance(a,b,t){ return Math.abs(a-b) <= t; }
 
 function startHintTimer(stageNumber){
   if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
-  const b1 = document.getElementById("hintBtn1");
-  const b2 = document.getElementById("hintBtn2");
-  if (b1) b1.classList.add("hidden");
-  if (b2) b2.classList.add("hidden");
-  const targetBtn = document.getElementById(stageNumber === 1 ? "hintBtn1" : "hintBtn2");
-  if (!targetBtn) return;
+  ["hintBtn2","hintBtn3"].forEach(id=>{ const b=document.getElementById(id); if(b) b.classList.add("hidden"); });
+  const targetBtnId = stageNumber === 2 ? "hintBtn2" : (stageNumber === 3 ? "hintBtn3" : null);
+  if (!targetBtnId) return;
+  const targetBtn = document.getElementById(targetBtnId);
   hintTimer = setTimeout(()=>{ targetBtn.classList.remove("hidden"); }, 30000);
 }
 
-function checkStage1(){
+function showStage(id){
+  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  if (id === "stage2") startHintTimer(2);
+  if (id === "stage3") startHintTimer(3);
+}
+
+function showGreen(){
+  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
+  document.getElementById("green").classList.add("active");
+  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+}
+
+/* ===============================
+   STAGE 2 (coordinates from report)
+   =============================== */
+function checkStage2(){
   const latVal = parseFloat(document.getElementById("lat").value);
   const lonVal = parseFloat(document.getElementById("lon").value);
-  const msg = document.getElementById("msg1");
+  const msg = document.getElementById("msg2");
   if (isNaN(latVal) || isNaN(lonVal)){
     msg.textContent = "Enter both latitude and longitude.";
     msg.className = "small bad"; return;
@@ -310,7 +461,7 @@ function checkStage1(){
           && withinTolerance(lonVal, CONFIG.targetLon, CONFIG.coordTolerance);
   if (ok){
     msg.textContent = "Correct! Proceeding…"; msg.className="small ok";
-    setTimeout(()=>{ showStage("stage2"); renderMapLinks(CONFIG.targetLat, CONFIG.targetLon); },400);
+    setTimeout(()=>{ showStage("stage3"); renderMapLinks(CONFIG.targetLat, CONFIG.targetLon); },400);
   } else {
     msg.textContent = "Not quite, try again."; msg.className="small bad";
   }
@@ -319,23 +470,21 @@ function checkStage1(){
 function renderMapLinks(lat, lon){
   const wrap = $("#mapLinks"); wrap.innerHTML="";
   const g = document.createElement("a");
-  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-  g.target="_blank"; g.textContent="Google Maps";
+  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`; g.target="_blank"; g.textContent="Google Maps";
   const a = document.createElement("a");
-  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`;
-  a.target="_blank"; a.textContent="Apple Maps";
+  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`; a.target="_blank"; a.textContent="Apple Maps";
   wrap.appendChild(g); wrap.appendChild(a);
 }
 
-function checkStage2(){
+/* ===============================
+   STAGE 3 (quake)
+   =============================== */
+function checkStage3(){
   const rawName = document.getElementById("quakeName").value || "";
   const rawYear = document.getElementById("quakeYear").value || "";
-  const msg = document.getElementById("msg2");
+  const msg = document.getElementById("msg3");
   const year = parseInt(rawYear, 10);
-  const nameOnly = rawName.toLowerCase()
-    .replace(/earthquake/g,"")
-    .replace(/[^a-z\s]/g,"")
-    .trim();
+  const nameOnly = rawName.toLowerCase().replace(/earthquake/g,"").replace(/[^a-z\s]/g,"").trim();
   const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
   const yearOk = (year === CONFIG.quake.year);
   if (nameOk && yearOk){
@@ -348,20 +497,327 @@ function checkStage2(){
   }
 }
 
-function showStage(id){
-  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo({top:0,behavior:"smooth"});
-  if (id === "stage1") startHintTimer(1);
-  if (id === "stage2") startHintTimer(2);
+/* ===============================
+   LINKEDIN MOBILE WORKFLOW
+   =============================== */
+const lnApp     = document.getElementById('linkedinApp');
+const lnScreens = document.getElementById('lnScreens');
+const lnBackBtn = document.getElementById('lnBack');
+const lnSheet   = document.getElementById('lnSheet');
+const lnToast   = document.getElementById('lnToast');
+
+function openLinkedIn(){
+  lnApp.classList.add('active');
+  lnApp.setAttribute('aria-hidden','false');
+  if(!lnScreens.dataset.init){ buildAllProfiles(); lnScreens.dataset.init = "1"; }
+  showProfile('you', {reset:true});     // show only YOU at start
+  lnScreens.focus();
 }
-function showGreen(){
-  document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
-  document.getElementById("green").classList.add("active");
-  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+function closeLinkedIn(){
+  lnApp.classList.remove('active');
+  lnApp.setAttribute('aria-hidden','true');
+  lnStack = [];
+  lnBackBtn.style.display = 'none';
+  lnSheet.classList.remove('active');
+  lnToast.classList.remove('show');
 }
 
-document.addEventListener("DOMContentLoaded", ()=> startHintTimer(1));
+/* helper: shuffle */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* Engineer network (≥3 connections each; reciprocal where sensible; never list "you" in others) */
+const PROFILES = {
+  you: {
+    id:"you", name:"You", emoji:"🦉",
+    headline:"Structural Engineer — 3 yrs",
+    about:"Structural Engineer (3 yrs). You’ve stepped into a major role on your company’s sustainability committee and need an environmental (LCA) consultant for a new case study.",
+    experience:["Structural Engineer — Firm A (3 yrs)"], /* one company only */
+    skills:["Embodied Carbon","LEED","Coordination"],
+    loc:"San Francisco Bay Area",
+    company:"Firm A", school:"Cal Poly",
+    connections:["A","B","G"]
+  },
+  /* structural -> sustainability -> consultant path */
+  A: { id:"A", name:"Maya Chen", emoji:"🦊",
+    headline:"Structural Engineer — GreenBuild Inc.",
+    about:"Low-carbon structure, mix optimization, EPD review.",
+    experience:["Structural Engineer — GreenBuild (5 yrs)"], skills:["Concrete Design","EPD Review","LEED"],
+    loc:"San Jose, CA", company:"GreenBuild Inc.", school:"UC Berkeley",
+    connections:["H","F","C"] // no 'you'
+  },
+  H: { id:"H", name:"Lina Petrova", emoji:"🐨",
+    headline:"Sustainability Engineer — EcoDesign",
+    about:"Coordinates certifications and embodied-carbon targets across projects.",
+    experience:["Sustainability Engineer — EcoDesign (6 yrs)"], skills:["LEED AP BD+C","Whole-Building LCA","EPDs"],
+    loc:"Palo Alto, CA", company:"EcoDesign", school:"Stanford",
+    connections:["E","A","J"] // includes previous A
+  },
+  E: { id:"E", name:"Priya Natarajan", emoji:"🕊️",
+    headline:"Environmental Engineer — LCA Consultant",
+    about:"Independent consultant focusing on whole-building LCAs and EPD reviews.",
+    experience:["Principal — LCA Studio (7 yrs)"], skills:["LCA","EPDs","Carbon Accounting"],
+    loc:"San Jose, CA", company:"LCA Studio", school:"UC Davis",
+    connections:["H","C","M"], target:true // includes previous H
+  },
+
+  /* other branches & decoys */
+  B: { id:"B", name:"Noah Kim", emoji:"🐼",
+    headline:"Civil Engineer — Water Resources",
+    about:"Watershed modeling and stormwater BMPs.",
+    experience:["Civil Engineer — FlowWorks (4 yrs)"], skills:["Hydrology","SWMM","H&H"],
+    loc:"Oakland, CA", company:"FlowWorks", school:"UCLA",
+    connections:["K","C","L"] // fixed: removed invalid 'D'
+  },
+  G: { id:"G", name:"Ravi Singh", emoji:"🐢",
+    headline:"Municipal Civil Engineer — Site/Grading",
+    about:"Permitting and utilities coordination.",
+    experience:["Civil Engineer — CityWorks (6 yrs)"], skills:["Grading","Utilities","Permits"],
+    loc:"San Mateo, CA", company:"CityWorks", school:"San Jose State",
+    connections:["L","K","F"]
+  },
+  F: { id:"F", name:"Alex Rossi", emoji:"🦌",
+    headline:"Structural Engineer — Bridges",
+    about:"Long-span steel bridges and fatigue.",
+    experience:["Bridge Engineer — SpanWorks (8 yrs)"], skills:["Steel","Fatigue","Inspection"],
+    loc:"Sacramento, CA", company:"SpanWorks", school:"Cal Poly",
+    connections:["A","L","K"]
+  },
+  C: { id:"C", name:"Sara Ortiz", emoji:"🦦",
+    headline:"Environmental Engineer — Compliance",
+    about:"Air & water compliance; embodied-carbon curiosity.",
+    experience:["Env Engineer — ClearSky (6 yrs)"], skills:["NEPA","Permitting","EPDs"],
+    loc:"San Francisco, CA", company:"ClearSky", school:"UC Santa Cruz",
+    connections:["A","B","M"]
+  },
+  K: { id:"K", name:"Ben Zhao", emoji:"🦉",
+    headline:"Civil Engineer — Transportation",
+    about:"Complete-streets & transit corridors.",
+    experience:["Civil — MetroWorks (5 yrs)"], skills:["Roadway","Transit","Traffic"],
+    loc:"Fremont, CA", company:"MetroWorks", school:"UC Irvine",
+    connections:["B","G","F"]
+  },
+  L: { id:"L", name:"Nina Alvarez", emoji:"🦊",
+    headline:"Geotechnical Engineer — TerraLab",
+    about:"Ground improvement & foundations.",
+    experience:["Geotech — TerraLab (7 yrs)"], skills:["Soils","Deep Foundations","Seismic"],
+    loc:"San Leandro, CA", company:"TerraLab", school:"UC Davis",
+    connections:["G","F","C"]
+  },
+  J: { id:"J", name:"Marco De Santis", emoji:"🐰",
+    headline:"Environmental Engineer — Wastewater",
+    about:"Process modeling for WWTPs.",
+    experience:["Process Eng — ClearWater (9 yrs)"], skills:["Process","Modeling","Permitting"],
+    loc:"San Francisco, CA", company:"ClearWater", school:"USF",
+    connections:["H","N","C"] // includes H
+  },
+  M: { id:"M", name:"Amira Hassan", emoji:"🕊️",
+    headline:"Energy & Carbon Analyst — Freelance",
+    about:"Embodied & operational carbon studies.",
+    experience:["Analyst — Freelance (4 yrs)"], skills:["WBLCA","Energy","Carbon"],
+    loc:"Sunnyvale, CA", company:"Freelance", school:"SJSU",
+    connections:["C","E","K"] // includes E
+  },
+  N: { id:"N", name:"Ethan Morales", emoji:"🐼",
+    headline:"Environmental Planner",
+    about:"CEQA/NEPA documents and stakeholder engagement.",
+    experience:["Planner — GreenPath (6 yrs)"], skills:["CEQA","NEPA","Outreach"],
+    loc:"Berkeley, CA", company:"GreenPath", school:"UC Berkeley",
+    connections:["J","L","K"] // includes J
+  }
+};
+
+let lnStack = []; // nav stack
+
+function buildAllProfiles(){
+  lnScreens.innerHTML = '';
+
+  // Create every profile section (hidden by default)
+  Object.values(PROFILES).forEach(p => {
+    const section = buildProfileSection(p);
+    section.style.display = 'none'; // hidden until shown via showProfile()
+    lnScreens.appendChild(section);
+  });
+
+  // Sheet & buttons
+  document.getElementById('lnExploreAgain').addEventListener('click', ()=>{
+    lnSheet.classList.remove('active');
+    showProfile('you', {reset:true});
+  });
+  document.getElementById('lnClose').addEventListener('click', ()=> lnSheet.classList.remove('active'));
+  document.getElementById('lnProceed').addEventListener('click', ()=>{
+    closeLinkedIn();
+    showStage('stage2'); // proceed to LCA report
+  });
+
+  // Back button
+  lnBackBtn.addEventListener('click', ()=> {
+    if(lnStack.length > 1){
+      lnStack.pop();
+      showProfile(lnStack[lnStack.length-1], {push:false});
+    } else {
+      // at root -> close overlay
+      closeLinkedIn();
+    }
+  });
+
+  document.getElementById('lnSearch').addEventListener('focus', (e)=> e.target.placeholder = "Search people, jobs, posts");
+}
+
+function iconBriefcase(){
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M10 4h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1h4V6a2 2 0 0 1 2-2Zm4 4V6h-4v2h4Zm7 6v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5h18Z"/></svg>`;
+}
+function iconSchool(){
+  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5 12.2V16l7 4 7-4v-3.8L12 16Z"/></svg>`;
+}
+
+function showToast(msg, ms=2000){
+  lnToast.textContent = msg;
+  lnToast.classList.add('show');
+  setTimeout(()=> lnToast.classList.remove('show'), ms);
+}
+
+function buildProfileSection(p){
+  const sec = document.createElement('section');
+  sec.id = `prof-${p.id}`;
+  sec.className = 'ln-card';
+  sec.setAttribute('role','region');
+  sec.setAttribute('aria-label', `${p.name} profile`);
+
+  const top = document.createElement('div');
+  top.innerHTML = `
+    <div class="ln-cover"></div>
+    <div class="ln-pad ln-head">
+      <div class="ln-ava" aria-hidden="true"><span class="emo">${p.emoji || "🦉"}</span></div>
+      <div style="flex:1">
+        <div class="ln-name">${p.name} ${p.target ? '✅' : ''}</div>
+        <div class="ln-headline">${p.headline}</div>
+        <div class="ln-buttons">
+          <button class="ln-btn primary">Connect</button>
+          <button class="ln-btn ln-more">More</button>
+        </div>
+      </div>
+    </div>
+    <div class="ln-section" style="border-top:0">
+      <div class="ln-meta">${p.loc || ''}</div>
+    </div>
+  `;
+  sec.appendChild(top);
+
+  const about = document.createElement('div');
+  about.innerHTML = `
+    <div class="ln-section-title">About</div>
+    <div class="ln-section">${p.about}</div>
+  `;
+  sec.appendChild(about);
+
+  const exp = document.createElement('div');
+  exp.innerHTML = `
+    <div class="ln-section-title">Experience</div>
+    <div class="ln-section">
+      ${(p.experience||[]).map(e=>`
+        <div class="ln-result">
+          <div class="ln-miniava"><span class="emo">🧰</span></div>
+          <div class="label">
+            <div class="name">${e}</div>
+            <div class="headline">${p.company || ''}</div>
+            <div class="loc">${p.loc || ''}</div>
+            <div class="smallrow">${iconBriefcase()} <span>${p.company || '—'}</span> &nbsp;&nbsp; ${iconSchool()} <span>${p.school || '—'}</span></div>
+          </div>
+        </div>`).join('')}
+    </div>
+  `;
+  sec.appendChild(exp);
+
+  const conWrap = document.createElement('div');
+  conWrap.innerHTML = `<div class="ln-section-title">Connections</div>`;
+  const conList = document.createElement('div');
+  conList.className = 'ln-section lazy-connections';
+
+  const ids = shuffle(p.connections || []);
+  if(ids.length === 0){
+    conList.innerHTML = `<div class="ln-meta">No visible connections for this profile.</div>`;
+  } else {
+    ids.forEach(cid=>{
+      const c = PROFILES[cid];
+      if(!c) return; // guard against bad ids
+      const row = document.createElement('button');
+      row.className = 'ln-result';
+      row.setAttribute('aria-label', `Open ${c.name} profile`);
+      row.innerHTML = `
+        <div class="ln-miniava"><span class="emo">${c.emoji || "🦉"}</span></div>
+        <div class="label">
+          <div class="name">${c.name} ${c.target ? '✅' : ''}</div>
+          <div class="headline">${c.headline}</div>
+          <div class="loc">${c.loc || ''}</div>
+          <div class="smallrow">
+            ${iconBriefcase()} <span>${c.company || '—'}</span>
+            &nbsp;&nbsp; ${iconSchool()} <span>${c.school || '—'}</span>
+          </div>
+        </div>
+      `;
+      row.addEventListener('click', ()=> showProfile(c.id));
+      conList.appendChild(row);
+    });
+  }
+  conWrap.appendChild(conList);
+  sec.appendChild(conWrap);
+
+  // Connect button behavior
+  const primaryBtn = top.querySelector('.ln-btn.primary');
+  primaryBtn.addEventListener('click', ()=>{
+    if(p.target){
+      lnSheet.classList.add('active'); // success
+    } else {
+      showToast("This isn’t the sustainability expert — check their connections.");
+      primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
+    }
+  });
+
+  // reveal connections when scrolled into view
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){ conList.classList.add('visible'); io.disconnect(); }
+    });
+  }, {root:lnScreens, threshold:.1});
+  io.observe(conList);
+
+  return sec;
+}
+
+function showProfile(id, opts={}){
+  if(opts.reset){ lnStack = []; }
+  if(opts.push !== false){ lnStack.push(id); }
+
+  // Back button visibility + behavior
+  if(lnStack.length > 1){
+    lnBackBtn.style.display = 'inline-flex';
+  } else {
+    lnBackBtn.style.display = 'none';
+  }
+
+  // Hide all sections, then show the target
+  Array.from(lnScreens.children).forEach(ch => ch.style.display = 'none');
+  const target = document.getElementById(`prof-${id}`);
+  if(target){
+    target.style.display = 'block';
+  } else {
+    // If somehow missing, fall back to 'you'
+    const root = document.getElementById('prof-you');
+    if(root) root.style.display = 'block';
+    lnStack = ['you'];
+    lnBackBtn.style.display = 'none';
+  }
+  lnScreens.scrollTo({top:0, behavior:'auto'});
+}
+
+/* ======= End ======= */
 </script>
 </body>
 </html>

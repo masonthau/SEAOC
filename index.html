@@ -106,6 +106,17 @@
   /* Inputs row preserved */
   .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-top:.8rem}
 
+  /* Stage 2 override: name on its own line, then year + submit together */
+  #stage2 .row{
+    display:grid;
+    grid-template-columns: 1fr auto;
+    gap:.6rem;
+    margin-top:.8rem;
+  }
+  #stage2 .row:first-of-type{
+    grid-template-columns:1fr; /* full-width for the EQ Name input */
+  }
+
   /* Inputs: bamboo slots */
   input[type=text], input[type=number]{
     width:100%; min-height:48px;
@@ -212,8 +223,6 @@
         <source srcset="plan-dark.jpg" media="(prefers-color-scheme: dark)">
         <img src="plan-light.jpg" alt="Structural plan" class="plan-img">
       </picture>
-      <!-- (Grid left intact in case you choose to re-enable it) -->
-      <!-- <div class="grid reveal"></div> -->
     </div>
 
     <div class="row">
@@ -226,16 +235,23 @@
     <div id="hint1" class="hint">Try switching your device to <strong>Dark Mode</strong>.</div>
   </section>
 
-  <!-- Stage 2 (structure unchanged) -->
+  <!-- Stage 2 (updated layout only) -->
   <section id="stage2" class="card stage">
     <h2>Stage 2 — The M'app'athon</h2>
     <p class="small">The ground once cracked where these coordinates lead — name the quake and the year of its deed.</p>
     <div class="linkrow" id="mapLinks"></div>
+
+    <!-- Name on its own full-width row -->
     <div class="row">
       <input id="quakeName" type="text" placeholder="EQ Name">
+    </div>
+
+    <!-- Year + Submit on the same row -->
+    <div class="row">
       <input id="quakeYear" type="number" inputmode="numeric" step="1" placeholder="Year">
       <button id="btn2" type="button" onclick="checkStage2()">Submit</button>
     </div>
+
     <div id="msg2" class="small" style="margin-top:.4rem;"></div>
     <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
     <div id="hint2" class="hint">Use your maps app to place these coordinates, which show the epicenter of a famous earthquake.</div>
@@ -303,9 +319,11 @@ function checkStage1(){
 function renderMapLinks(lat, lon){
   const wrap = $("#mapLinks"); wrap.innerHTML="";
   const g = document.createElement("a");
-  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`; g.target="_blank"; g.textContent="Google Maps";
+  g.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+  g.target="_blank"; g.textContent="Google Maps";
   const a = document.createElement("a");
-  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`; a.target="_blank"; a.textContent="Apple Maps";
+  a.href = `https://maps.apple.com/?ll=${lat},${lon}&q=Epicenter`;
+  a.target="_blank"; a.textContent="Apple Maps";
   wrap.appendChild(g); wrap.appendChild(a);
 }
 

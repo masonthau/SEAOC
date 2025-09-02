@@ -59,7 +59,7 @@
   .stage.active{display:block}
 
   header .sub, .small{color:var(--muted)}
-  .ok{color:#7ef7b0} .bad{color:var(--bad)}
+  .ok{color:#7ef7b0} .bad{color:#ff6b6b}
   .row{display:grid;grid-template-columns:1fr 1fr auto;gap:.6rem;margin-top:.8rem}
 
   /* Stage 3 stacked inputs */
@@ -168,13 +168,20 @@
   .ln-toast.show{display:block; animation:toastfade .25s ease}
   @keyframes toastfade{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 
-  /* Mission banner */
+  /* Mission banner — fix weird spacing on mobile */
   .ln-taskbar{
     position:sticky; top:56px; z-index:6;
     background:#fff; border-bottom:1px solid var(--ln-border);
-    padding:10px 12px; font-weight:800; display:flex; align-items:center; gap:8px;
+    padding:10px 12px; display:flex; align-items:center; gap:10px;
   }
-  .ln-taskbar .tag{background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700}
+  .ln-taskbar .tag{
+    background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff;
+    padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; flex:0 0 auto;
+  }
+  .mission-text{
+    flex:1 1 auto; font-weight:800; font-size:14px; line-height:1.25;
+    text-align:left; white-space:normal; letter-spacing:0; word-spacing:0;
+  }
 
   .ln-screen{flex:1; overflow:auto; -webkit-overflow-scrolling:touch}
   .ln-card{background:#fff;border:1px solid var(--ln-border);border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.05); overflow:hidden; margin:12px}
@@ -199,9 +206,8 @@
   .ln-section-title{font-weight:800; margin:10px 12px 0 12px}
   .ln-section{background:#fff; border-top:1px solid var(--ln-border); padding:10px 12px}
 
-  /* Result-row aesthetic */
-  .ln-result{display:flex; gap:12px; padding:14px 0; border-top:1px solid var(--ln-border); text-align:left; background:#fff}
-  .ln-result:first-child{border-top:0}
+  /* Rows base */
+  .ln-result{display:flex; gap:12px; text-align:left; background:#fff}
   .ln-miniava{
     width:48px;height:48px;border-radius:50%; background:#fff; display:grid; place-items:center; flex:0 0 48px;
     box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 2px #fff, 0 0 0 3px #e9eef7;
@@ -213,6 +219,17 @@
   .ln-result .loc{font-size:12px;color:#6b7480; margin-top:2px}
   .ln-result .smallrow{display:flex; gap:8px; align-items:center; color:#6b7480; font-size:12px; margin-top:4px}
   .ln-result svg{vertical-align:-2px}
+
+  /* Experience = flat list */
+  .ln-explist .ln-exprow{padding:14px 0; border-top:1px solid var(--ln-border)}
+  .ln-explist .ln-exprow:first-child{border-top:0}
+
+  /* Connections = spaced cards (fix cramming) */
+  .ln-connlist{padding-top:8px}
+  .ln-connlist .ln-connrow{
+    padding:12px; border:1px solid var(--ln-border); border-radius:12px;
+    margin:10px 0; box-shadow:0 2px 8px rgba(10,102,194,.06);
+  }
 
   /* Bottom tabs */
   .ln-bottom{
@@ -383,7 +400,8 @@
   <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability expert — check their connections.</div>
 
   <div class="ln-taskbar">
-    <span class="tag">Mission</span> Find a <strong>sustainability expert</strong> and <strong>connect</strong> with them
+    <span class="tag">Mission</span>
+    <div class="mission-text">Find a <strong>sustainability expert</strong> and <strong>connect</strong> with them</div>
   </div>
 
   <div id="lnScreens" class="ln-screen" tabindex="0" aria-live="polite"></div>
@@ -538,42 +556,39 @@ const PROFILES = {
     id:"you", name:"You", emoji:"🦉",
     headline:"Structural Engineer — 3 yrs",
     about:"Structural Engineer (3 yrs). You’ve stepped into a major role on your company’s sustainability committee and need an environmental (LCA) consultant for a new case study.",
-    experience:["Structural Engineer — Firm A (3 yrs)"], /* one company only */
+    experience:["Structural Engineer — Firm A (3 yrs)"],
     skills:["Embodied Carbon","LEED","Coordination"],
     loc:"San Francisco Bay Area",
     company:"Firm A", school:"Cal Poly",
     connections:["A","B","G"]
   },
-  /* structural -> sustainability -> consultant path */
   A: { id:"A", name:"Maya Chen", emoji:"🦊",
     headline:"Structural Engineer — GreenBuild Inc.",
     about:"Low-carbon structure, mix optimization, EPD review.",
     experience:["Structural Engineer — GreenBuild (5 yrs)"], skills:["Concrete Design","EPD Review","LEED"],
     loc:"San Jose, CA", company:"GreenBuild Inc.", school:"UC Berkeley",
-    connections:["H","F","C"] // no 'you'
+    connections:["H","F","C"]
   },
   H: { id:"H", name:"Lina Petrova", emoji:"🐨",
     headline:"Sustainability Engineer — EcoDesign",
     about:"Coordinates certifications and embodied-carbon targets across projects.",
     experience:["Sustainability Engineer — EcoDesign (6 yrs)"], skills:["LEED AP BD+C","Whole-Building LCA","EPDs"],
     loc:"Palo Alto, CA", company:"EcoDesign", school:"Stanford",
-    connections:["E","A","J"] // includes previous A
+    connections:["E","A","J"]
   },
   E: { id:"E", name:"Priya Natarajan", emoji:"🕊️",
     headline:"Environmental Engineer — LCA Consultant",
     about:"Independent consultant focusing on whole-building LCAs and EPD reviews.",
     experience:["Principal — LCA Studio (7 yrs)"], skills:["LCA","EPDs","Carbon Accounting"],
     loc:"San Jose, CA", company:"LCA Studio", school:"UC Davis",
-    connections:["H","C","M"], target:true // includes previous H
+    connections:["H","C","M"], target:true
   },
-
-  /* other branches & decoys */
   B: { id:"B", name:"Noah Kim", emoji:"🐼",
     headline:"Civil Engineer — Water Resources",
     about:"Watershed modeling and stormwater BMPs.",
     experience:["Civil Engineer — FlowWorks (4 yrs)"], skills:["Hydrology","SWMM","H&H"],
     loc:"Oakland, CA", company:"FlowWorks", school:"UCLA",
-    connections:["K","C","L"] // fixed: removed invalid 'D'
+    connections:["K","C","L"]
   },
   G: { id:"G", name:"Ravi Singh", emoji:"🐢",
     headline:"Municipal Civil Engineer — Site/Grading",
@@ -615,21 +630,21 @@ const PROFILES = {
     about:"Process modeling for WWTPs.",
     experience:["Process Eng — ClearWater (9 yrs)"], skills:["Process","Modeling","Permitting"],
     loc:"San Francisco, CA", company:"ClearWater", school:"USF",
-    connections:["H","N","C"] // includes H
+    connections:["H","N","C"]
   },
   M: { id:"M", name:"Amira Hassan", emoji:"🕊️",
     headline:"Energy & Carbon Analyst — Freelance",
     about:"Embodied & operational carbon studies.",
     experience:["Analyst — Freelance (4 yrs)"], skills:["WBLCA","Energy","Carbon"],
     loc:"Sunnyvale, CA", company:"Freelance", school:"SJSU",
-    connections:["C","E","K"] // includes E
+    connections:["C","E","K"]
   },
   N: { id:"N", name:"Ethan Morales", emoji:"🐼",
     headline:"Environmental Planner",
     about:"CEQA/NEPA documents and stakeholder engagement.",
     experience:["Planner — GreenPath (6 yrs)"], skills:["CEQA","NEPA","Outreach"],
     loc:"Berkeley, CA", company:"GreenPath", school:"UC Berkeley",
-    connections:["J","L","K"] // includes J
+    connections:["J","L","K"]
   }
 };
 
@@ -638,10 +653,10 @@ let lnStack = []; // nav stack
 function buildAllProfiles(){
   lnScreens.innerHTML = '';
 
-  // Create every profile section (hidden by default)
+  // Build every profile (hidden by default)
   Object.values(PROFILES).forEach(p => {
     const section = buildProfileSection(p);
-    section.style.display = 'none'; // hidden until shown via showProfile()
+    section.style.display = 'none';
     lnScreens.appendChild(section);
   });
 
@@ -653,7 +668,7 @@ function buildAllProfiles(){
   document.getElementById('lnClose').addEventListener('click', ()=> lnSheet.classList.remove('active'));
   document.getElementById('lnProceed').addEventListener('click', ()=>{
     closeLinkedIn();
-    showStage('stage2'); // proceed to LCA report
+    showStage('stage2');
   });
 
   // Back button
@@ -662,7 +677,6 @@ function buildAllProfiles(){
       lnStack.pop();
       showProfile(lnStack[lnStack.length-1], {push:false});
     } else {
-      // at root -> close overlay
       closeLinkedIn();
     }
   });
@@ -718,11 +732,12 @@ function buildProfileSection(p){
   sec.appendChild(about);
 
   const exp = document.createElement('div');
+  exp.className = 'ln-explist';
   exp.innerHTML = `
     <div class="ln-section-title">Experience</div>
     <div class="ln-section">
       ${(p.experience||[]).map(e=>`
-        <div class="ln-result">
+        <div class="ln-result ln-exprow">
           <div class="ln-miniava"><span class="emo">🧰</span></div>
           <div class="label">
             <div class="name">${e}</div>
@@ -738,7 +753,7 @@ function buildProfileSection(p){
   const conWrap = document.createElement('div');
   conWrap.innerHTML = `<div class="ln-section-title">Connections</div>`;
   const conList = document.createElement('div');
-  conList.className = 'ln-section lazy-connections';
+  conList.className = 'ln-section lazy-connections ln-connlist';
 
   const ids = shuffle(p.connections || []);
   if(ids.length === 0){
@@ -746,9 +761,9 @@ function buildProfileSection(p){
   } else {
     ids.forEach(cid=>{
       const c = PROFILES[cid];
-      if(!c) return; // guard against bad ids
+      if(!c) return;
       const row = document.createElement('button');
-      row.className = 'ln-result';
+      row.className = 'ln-result ln-connrow';
       row.setAttribute('aria-label', `Open ${c.name} profile`);
       row.innerHTML = `
         <div class="ln-miniava"><span class="emo">${c.emoji || "🦉"}</span></div>
@@ -769,11 +784,11 @@ function buildProfileSection(p){
   conWrap.appendChild(conList);
   sec.appendChild(conWrap);
 
-  // Connect button behavior
+  // Connect behavior
   const primaryBtn = top.querySelector('.ln-btn.primary');
   primaryBtn.addEventListener('click', ()=>{
     if(p.target){
-      lnSheet.classList.add('active'); // success
+      lnSheet.classList.add('active');
     } else {
       showToast("This isn’t the sustainability expert — check their connections.");
       primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
@@ -791,24 +806,17 @@ function buildProfileSection(p){
   return sec;
 }
 
+let lnStack = []; // nav stack
 function showProfile(id, opts={}){
   if(opts.reset){ lnStack = []; }
   if(opts.push !== false){ lnStack.push(id); }
+  lnBackBtn.style.display = lnStack.length > 1 ? 'inline-flex' : 'none';
 
-  // Back button visibility + behavior
-  if(lnStack.length > 1){
-    lnBackBtn.style.display = 'inline-flex';
-  } else {
-    lnBackBtn.style.display = 'none';
-  }
-
-  // Hide all sections, then show the target
   Array.from(lnScreens.children).forEach(ch => ch.style.display = 'none');
   const target = document.getElementById(`prof-${id}`);
   if(target){
     target.style.display = 'block';
   } else {
-    // If somehow missing, fall back to 'you'
     const root = document.getElementById('prof-you');
     if(root) root.style.display = 'block';
     lnStack = ['you'];
@@ -816,8 +824,6 @@ function showProfile(id, opts={}){
   }
   lnScreens.scrollTo({top:0, behavior:'auto'});
 }
-
-/* ======= End ======= */
 </script>
 </body>
 </html>

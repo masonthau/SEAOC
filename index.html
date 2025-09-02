@@ -103,23 +103,26 @@
   .hint{color:#e8dcbb;font-size:.95rem;margin-top:.5rem;display:none}
   .hidden{display:none !important}
 
-  /* Report (Stage 2) */
+  /* Report (Stage 2) — now on dark background, shorter */
   .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
   .report{
-    background:#fff; color:#222; padding:16px 14px; min-height:60vh;
+    background:transparent; color:var(--lightink); padding:14px 12px; min-height:40vh;
     font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   }
   .report h3{margin:0 0 8px 0; font-size:18px}
-  .report .meta{color:#556; font-size:12px; margin-bottom:10px}
-  .report .sec{margin-top:12px}
-  .report .sec h4{margin:0 0 6px 0; font-size:15px}
+  .report .meta{color:rgba(255,255,255,.65); font-size:12px; margin-bottom:8px}
+  .report .sec{margin-top:10px}
+  .report .sec h4{margin:0 0 6px 0; font-size:15px; color:#dfe7dd}
   .report .sec p{margin:0 0 8px 0}
-  .report table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px}
-  .report th,.report td{border:1px solid #e4e6ea; padding:6px 8px; text-align:left}
-  .report tfoot td{font-size:12px; color:#667}
-  .coord{color:#fff; user-select:none}
+  .report table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px; color:var(--lightink)}
+  .report th,.report td{border:1px solid rgba(255,255,255,.16); padding:6px 8px; text-align:left; background:rgba(255,255,255,.02)}
+  .report tfoot td{font-size:12px; color:rgba(255,255,255,.7)}
+  .report .note{color:rgba(255,255,255,.7); font-size:12px}
+
+  /* Coordinate reveal: white normally; bright red in dark mode */
+  .coord{color:var(--lightink); font-weight:700; user-select:none}
   @media (prefers-color-scheme: dark){
-    .coord{color:#ff4a4a; font-weight:800}
+    .coord{color:#ff4d5e; text-shadow:0 0 6px rgba(255,77,94,.35)}
   }
 
   .greenscreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
@@ -139,6 +142,7 @@
     position:fixed; inset:0; background:var(--ln-bg); color:var(--ln-ink);
     font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
     display:none; flex-direction:column;
+    z-index:10000;
   }
   .linkedin-app.active{display:flex}
 
@@ -168,7 +172,7 @@
   .ln-toast.show{display:block; animation:toastfade .25s ease}
   @keyframes toastfade{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 
-  /* Mission banner — fix weird spacing on mobile */
+  /* Mission banner (updated wording) */
   .ln-taskbar{
     position:sticky; top:56px; z-index:6;
     background:#fff; border-bottom:1px solid var(--ln-border);
@@ -224,12 +228,24 @@
   .ln-explist .ln-exprow{padding:14px 0; border-top:1px solid var(--ln-border)}
   .ln-explist .ln-exprow:first-child{border-top:0}
 
-  /* Connections = spaced cards (fix cramming) */
+  /* Connections = spaced cards */
   .ln-connlist{padding-top:8px}
   .ln-connlist .ln-connrow{
     padding:12px; border:1px solid var(--ln-border); border-radius:12px;
     margin:10px 0; box-shadow:0 2px 8px rgba(10,102,194,.06);
   }
+
+  /* Extras to feel more LinkedIn-y */
+  .ln-pills{display:flex; flex-wrap:wrap; gap:8px}
+  .ln-pill{padding:6px 10px; font-size:12px; border-radius:16px; border:1px solid #e6ebf2; background:#f7f9fc}
+  .ln-highlight{display:flex; align-items:center; gap:8px; padding:10px 0; border-top:1px solid var(--ln-border)}
+  .ln-highlight:first-child{border-top:0}
+  .ln-activity{padding:10px 0; border-top:1px solid var(--ln-border)}
+  .ln-activity:first-child{border-top:0}
+  .ln-activity .title{font-weight:700}
+  .ln-activity .meta{font-size:12px; color:#6b7480}
+  .ln-edurow{padding:10px 0; border-top:1px solid var(--ln-border)}
+  .ln-edurow:first-child{border-top:0}
 
   /* Bottom tabs */
   .ln-bottom{
@@ -267,76 +283,55 @@
     <h2>Stage 1 — Connection Web</h2>
     <p class="small">
       You’re a <strong>Structural Engineer (3 yrs)</strong> who’s just taken on a major role in your company’s sustainability committee.
-      Your mission is to <strong>find a sustainability expert and connect with them</strong> to kick off a building LCA case study.
+      Your mission is to <strong>find a sustainability consultant and connect with them</strong> to kick off a building LCA case study.
     </p>
     <div class="row" style="grid-template-columns:1fr;">
-      <button class="ln-open-btn" onclick="openLinkedIn()" aria-label="Open LinkedIn style puzzle">Open LinkedIn</button>
+      <button id="openLinkedInBtn" class="ln-open-btn" type="button">Open LinkedIn</button>
     </div>
   </section>
 
   <!-- =========================
-       STAGE 2 — LCA report reveal
+       STAGE 2 — LCA report reveal (shorter, dark)
        ========================= -->
   <section id="stage2" class="card stage">
     <h2>Stage 2 — The Hidden Message</h2>
-    <p class="small">Invisible in the light, but shining in the dark — coordinates appear when your phone enters <strong>Dark Mode</strong>. Gather them and enter below.</p>
+    <p class="small">Switch your device to <strong>Dark Mode</strong> — certain figures in this case-study summary will glow red.</p>
 
     <div class="gridwrap">
       <div class="report" role="article" aria-label="LCA Case Study Report">
-        <h3>Life Cycle Assessment (LCA) — Case Study: Harbor Offices</h3>
-        <div class="meta">Prepared by: EcoMetrics Studio • Version 1.2 • Date: 2024-11-15<span class="coord" aria-hidden="true">37</span></div>
-
-        <div class="sec">
-          <h4>Executive Summary</h4>
-          <p>
-            The Harbor Offices project achieved a significant reduction in embodied carbon for the structural package relative to a 2018 baseline.
-            Strategies included concrete mix optimization (lower clinker content), higher SCM substitution, and shift to Grade 60 reinforcement with
-            mill EPDs. Modeled cradle-to-gate impacts follow EN 15804+A2 and ISO 14044<span class="coord" aria-hidden="true">.0</span>
-          </p>
+        <h3>Case Study LCA — Harbor Offices</h3>
+        <div class="meta">
+          Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez<span class="coord" aria-hidden="true">37</span>
         </div>
 
         <div class="sec">
           <h4>Goal & Scope</h4>
           <p>
-            The goal is to quantify embodied carbon (GWP100) for structure and envelope at Design Development. The scope covers modules A1–A3, with placeholders for A4 and A5. Results are reported per m² GFA and per 60-year service life<span class="coord" aria-hidden="true">4</span>.
+            Quantify embodied carbon (GWP100) for structure & envelope at Design Development per EN 15804+A2. System boundary: A1–A3<span class="coord" aria-hidden="true">.0</span> with placeholders for A4/A5<span class="coord" aria-hidden="true">4</span>.
           </p>
         </div>
 
         <div class="sec">
-          <h4>Data & Assumptions</h4>
+          <h4>Key Inputs</h4>
           <p>
-            Primary data were collected from the design team and suppliers; secondary data use Ecoinvent v3.8 and manufacturer EPDs. Transportation uses regional averages with sensitivity runs for marine and rail<span class="coord" aria-hidden="true">, </span>
+            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content<span class="coord" aria-hidden="true">, </span> aluminum cladding with supplier EPDs.
           </p>
         </div>
 
         <div class="sec">
-          <h4>Results (A1–A3)</h4>
+          <h4>A1–A3 Results (per m² GFA)</h4>
           <table>
-            <thead><tr><th>Package</th><th>GWP (kgCO₂e/m²)</th><th>Notes</th></tr></thead>
+            <thead><tr><th>Package</th><th>GWP (kgCO₂e)</th><th>Note</th></tr></thead>
             <tbody>
-              <tr><td>Concrete</td><td>153</td><td>CEM II/A + SCM, 30% slag</td></tr>
-              <tr><td>Rebar</td><td>42</td><td>EAF route, recycled content 95%</td></tr>
-              <tr><td>Structural Steel</td><td>27</td><td>EAF route, mill certificates</td></tr>
-              <tr><td>Cladding</td><td>61</td><td>Aluminum composite, supplier EPD</td></tr>
+              <tr><td>Concrete</td><td>152</td><td>SCM substitution</td></tr>
+              <tr><td>Rebar</td><td>41</td><td>EAF route</td></tr>
+              <tr><td>Cladding</td><td>60</td><td>Manufacturer EPD</td></tr>
             </tbody>
             <tfoot>
-              <tr><td colspan="3">Total modeled GWP (structure+envelope, DD): 283 kgCO₂e/m²<span class="coord" aria-hidden="true">-121</span></td></tr>
+              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²<span class="coord" aria-hidden="true">-121</span></td></tr>
             </tfoot>
           </table>
-        </div>
-
-        <div class="sec">
-          <h4>Verification</h4>
-          <p>
-            Results were reviewed against PCR requirements and cross-checked with third-party EPDs for major materials. Uncertainty is driven by cement content and transport distance variability<span class="coord" aria-hidden="true">.</span>
-          </p>
-        </div>
-
-        <div class="sec">
-          <h4>References</h4>
-          <p>
-            EN 15804+A2 (2019); ISO 14040/44; CLF MEP/Structure guidance v2.1; Manufacturer EPD databases<span class="coord" aria-hidden="true">88</span>
-          </p>
+          <div class="note">Uncertainty: cement content & transport distance<span class="coord" aria-hidden="true">.</span> References: ISO 14044; CLF guidance<span class="coord" aria-hidden="true">88</span></div>
         </div>
       </div>
     </div>
@@ -348,7 +343,7 @@
     </div>
     <div id="msg2" class="small"></div>
     <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
-    <div id="hint2" class="hint">Switch your device to <strong>Dark Mode</strong> and scan the report top-to-bottom.</div>
+    <div id="hint2" class="hint">Look for red numbers sprinkled through the summary.</div>
   </section>
 
   <!-- =========================
@@ -397,11 +392,11 @@
     </div>
   </div>
 
-  <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability expert — check their connections.</div>
+  <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability consultant — check their connections.</div>
 
   <div class="ln-taskbar">
     <span class="tag">Mission</span>
-    <div class="mission-text">Find a <strong>sustainability expert</strong> and <strong>connect</strong> with them</div>
+    <div class="mission-text">Find a <strong>sustainability consultant</strong> and <strong>connect</strong> with them</div>
   </div>
 
   <div id="lnScreens" class="ln-screen" tabindex="0" aria-live="polite"></div>
@@ -528,7 +523,7 @@ function openLinkedIn(){
   lnApp.classList.add('active');
   lnApp.setAttribute('aria-hidden','false');
   if(!lnScreens.dataset.init){ buildAllProfiles(); lnScreens.dataset.init = "1"; }
-  showProfile('you', {reset:true});     // show only YOU at start
+  showProfile('you', {reset:true});
   lnScreens.focus();
 }
 function closeLinkedIn(){
@@ -650,10 +645,17 @@ const PROFILES = {
 
 let lnStack = []; // nav stack
 
+/* Utilities to compute a bit of “real” data */
+function mutualCount(p){
+  const youConns = new Set(PROFILES.you.connections);
+  const theirs = new Set(p.connections || []);
+  let n=0; theirs.forEach(id=>{ if(youConns.has(id)) n++; });
+  return n;
+}
+
 function buildAllProfiles(){
   lnScreens.innerHTML = '';
 
-  // Build every profile (hidden by default)
   Object.values(PROFILES).forEach(p => {
     const section = buildProfileSection(p);
     section.style.display = 'none';
@@ -684,12 +686,10 @@ function buildAllProfiles(){
   document.getElementById('lnSearch').addEventListener('focus', (e)=> e.target.placeholder = "Search people, jobs, posts");
 }
 
-function iconBriefcase(){
-  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M10 4h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1h4V6a2 2 0 0 1 2-2Zm4 4V6h-4v2h4Zm7 6v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5h18Z"/></svg>`;
-}
-function iconSchool(){
-  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5 12.2V16l7 4 7-4v-3.8L12 16Z"/></svg>`;
-}
+function iconBriefcase(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M10 4h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1h4V6a2 2 0 0 1 2-2Zm4 4V6h-4v2h4Zm7 6v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5h18Z"/></svg>`;}
+function iconSchool(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5 12.2V16l7 4 7-4v-3.8L12 16Z"/></svg>`;}
+function iconSpark(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M11 2l1.5 5H18l-4 3 1.5 5L11 12l-4.5 3L8 10 4 7h5.5L11 2z"/></svg>`;}
+function iconUsers(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4Zm-8 1a4 4 0 10-4-4 4 4 0 004 4Zm0 2c-3.33 0-10 1.67-10 5v3h12v-3c0-3.33-6.67-5-10-5Zm8 0c-.53 0-1.14.03-1.79.08A7.2 7.2 0 0120 20v2h4v-3c0-3.33-6.67-5-10-5Z"/></svg>`;}
 
 function showToast(msg, ms=2000){
   lnToast.textContent = msg;
@@ -731,6 +731,19 @@ function buildProfileSection(p){
   `;
   sec.appendChild(about);
 
+  /* Highlights */
+  const hi = document.createElement('div');
+  const m = mutualCount(p);
+  hi.innerHTML = `
+    <div class="ln-section-title">Highlights</div>
+    <div class="ln-section">
+      <div class="ln-highlight">${iconUsers()} <div><strong>${m}</strong> mutual connection${m===1?'':'s'}</div></div>
+      <div class="ln-highlight">${iconSpark()} <div>Open to collaborating on low-carbon projects</div></div>
+    </div>
+  `;
+  sec.appendChild(hi);
+
+  /* Experience */
   const exp = document.createElement('div');
   exp.className = 'ln-explist';
   exp.innerHTML = `
@@ -750,6 +763,47 @@ function buildProfileSection(p){
   `;
   sec.appendChild(exp);
 
+  /* Skills */
+  const skills = document.createElement('div');
+  skills.innerHTML = `
+    <div class="ln-section-title">Skills</div>
+    <div class="ln-section"><div class="ln-pills">
+      ${(p.skills||['Teamwork','Communication']).map(s=>`<span class="ln-pill">${s}</span>`).join('')}
+    </div></div>
+  `;
+  sec.appendChild(skills);
+
+  /* Education */
+  const edu = document.createElement('div');
+  edu.innerHTML = `
+    <div class="ln-section-title">Education</div>
+    <div class="ln-section">
+      <div class="ln-edurow">
+        <div class="title"><strong>${p.school || 'State University'}</strong></div>
+        <div class="ln-meta">B.S. Engineering • 4 years</div>
+      </div>
+    </div>
+  `;
+  sec.appendChild(edu);
+
+  /* Activity */
+  const activity = document.createElement('div');
+  activity.innerHTML = `
+    <div class="ln-section-title">Activity</div>
+    <div class="ln-section">
+      <div class="ln-activity">
+        <div class="title">${p.name.split(' ')[0]} shared a post</div>
+        <div class="meta">• 3d • “Great discussion on whole-building LCA and EPDs.”</div>
+      </div>
+      <div class="ln-activity">
+        <div class="title">${p.name.split(' ')[0]} liked an article</div>
+        <div class="meta">• 1w • “Decarbonizing Concrete Mixes”</div>
+      </div>
+    </div>
+  `;
+  sec.appendChild(activity);
+
+  /* Connections */
   const conWrap = document.createElement('div');
   conWrap.innerHTML = `<div class="ln-section-title">Connections</div>`;
   const conList = document.createElement('div');
@@ -790,7 +844,7 @@ function buildProfileSection(p){
     if(p.target){
       lnSheet.classList.add('active');
     } else {
-      showToast("This isn’t the sustainability expert — check their connections.");
+      showToast("This isn’t the sustainability consultant — check their connections.");
       primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
     }
   });
@@ -806,7 +860,6 @@ function buildProfileSection(p){
   return sec;
 }
 
-let lnStack = []; // nav stack
 function showProfile(id, opts={}){
   if(opts.reset){ lnStack = []; }
   if(opts.push !== false){ lnStack.push(id); }
@@ -824,6 +877,12 @@ function showProfile(id, opts={}){
   }
   lnScreens.scrollTo({top:0, behavior:'auto'});
 }
+
+/* Bind Open LinkedIn button once DOM is ready */
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('openLinkedInBtn');
+  if (btn) btn.addEventListener('click', openLinkedIn);
+});
 </script>
 </body>
 </html>

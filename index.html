@@ -115,12 +115,14 @@
   .report .sec{margin-top:10px}
   .report .sec h4{margin:0 0 6px 0; font-size:15px; color:#dfe7dd}
   .report .sec p{margin:0 0 8px 0}
+  .report ul{margin:8px 0 0 18px; padding:0}
+  .report li{margin:6px 0}
   .report table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px; color:var(--lightink)}
   .report th,.report td{border:1px solid rgba(255,255,255,.16); padding:6px 8px; text-align:left; background:rgba(255,255,255,.02)}
   .report tfoot td{font-size:12px; color:rgba(255,255,255,.7)}
   .report .note{color:rgba(255,255,255,.7); font-size:12px}
 
-  /* Coordinate reveal: white normally; bright red in dark mode */
+  /* Coordinate reveal: subtle in light mode; bright red glow in dark mode */
   .coord{color:var(--lightink); font-weight:700; user-select:none}
   @media (prefers-color-scheme: dark){
     .coord{color:#ff4d5e; text-shadow:0 0 6px rgba(255,77,94,.35)}
@@ -173,16 +175,43 @@
   .ln-toast.show{display:block; animation:toastfade .25s ease}
   @keyframes toastfade{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 
-  /* Mission banner — replaced text per request */
-  .ln-taskbar{
-    position:sticky; top:56px; z-index:6;
-    background:#fff; border-bottom:1px solid var(--ln-border);
-    padding:10px 12px; display:flex; align-items:center; gap:10px;
-  }
-  .ln-taskbar .tag{
-    background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff;
-    padding:6px 10px; border-radius:12px; font-size:13px; font-weight:800; flex:0 0 auto;
-  }
+/* Header layout like the LinkedIn app screenshot */
+.ln-head { align-items: flex-start; }
+.ln-head-main { flex:1; min-width:0; }
+.ln-name { font-weight:800; font-size:20px; line-height:1.2; }
+.ln-headline { color:#434a54; font-size:14px; margin-top:2px; }
+.ln-submeta { color:#6b7480; font-size:12px; margin-top:4px; }
+.ln-stats { font-weight:700; font-size:13px; margin-top:8px; }
+
+/* New button bar */
+.ln-buttonbar {
+  display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:nowrap;
+}
+.ln-btn.blue { color:#fff; background:var(--ln-blue); border:1px solid transparent; }
+.ln-btn.ghost { background:#fff; color:#0a66c2; border:1px solid #d3e3ff; }
+.ln-btn.ln-more { width:40px; padding:0; font-weight:800; border-radius:999px; }
+
+/* Make the two main buttons substantial and full-width */
+.ln-buttonbar .ln-btn.blue,
+.ln-buttonbar .ln-btn.ghost {
+  flex:1 1 auto; min-height:40px; border-radius:999px; font-weight:800;
+}
+
+
+ /* Mission banner (pill + wrapped text) */
+.ln-taskbar{
+  position:sticky; top:56px; z-index:6;
+  background:#fff; border-bottom:1px solid var(--ln-border);
+  padding:10px 12px; display:flex; align-items:center; gap:10px;
+}
+.ln-taskbar .tag{
+  background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff;
+  padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; flex:0 0 auto;
+}
+.mission-text{
+  flex:1 1 auto; font-weight:800; font-size:14px; line-height:1.25;
+  text-align:left; white-space:normal; letter-spacing:0; word-spacing:0;
+}
 
   .ln-screen{flex:1; overflow:auto; -webkit-overflow-scrolling:touch}
   .ln-card{background:#fff;border:1px solid var(--ln-border);border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.05); overflow:hidden; margin:12px}
@@ -337,23 +366,24 @@
           <div class="note">Uncertainty: cement content & transport distance. References: ISO 14044; CLF guidance.</div>
         </div>
 
-        <!-- All coordinate digits moved LOWER in the report for easier viewing on phones while typing -->
+        <!-- Bottom-half appendix with dispersed, hidden coordinate digits -->
         <div class="sec">
-          <h4>Appendix Note</h4>
-          <p>
-            QA check ID: <span class="coord" aria-hidden="true">37</span><span class="coord" aria-hidden="true">.0</span><span class="coord" aria-hidden="true">4</span>,
-            Project archive ref: <span class="coord" aria-hidden="true">-121</span><span class="coord" aria-hidden="true">.</span><span class="coord" aria-hidden="true">88</span>
-          </p>
+          <h4>Appendix — Notes & Citations</h4>
+          <ul>
+            <li>Standards cross-check per EN 15804+A2 Rev <span class="coord" aria-hidden="true">3</span><span class="coord" aria-hidden="true">7</span>.</li>
+            <li>Mix comparison memo v<span class="coord" aria-hidden="true">0</span>.<span class="coord" aria-hidden="true">4</span> archived.</li>
+            <li>Transport log ID: <span class="coord" aria-hidden="true">-121</span><span class="coord" aria-hidden="true">.</span><span class="coord" aria-hidden="true">88</span> (internal reference).</li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <!-- Inputs as separate lines, in requested order: Longitude, Latitude, then Submit -->
+    <!-- Inputs as separate lines, in requested order: Latitude, then Longitude, then Submit -->
     <div class="row" style="grid-template-columns:1fr;">
-      <input id="lon" type="number" step="any" placeholder="Longitude (e.g., -121.88)">
+      <input id="lat" type="number" step="any" placeholder="Latitude (e.g., 34.05)">
     </div>
     <div class="row" style="grid-template-columns:1fr;">
-      <input id="lat" type="number" step="any" placeholder="Latitude (e.g., 37.04)">
+      <input id="lon" type="number" step="any" placeholder="Longitude (e.g., -118.25)">
     </div>
     <div class="row" style="grid-template-columns:1fr;">
       <button onclick="checkStage2()">Submit</button>
@@ -413,9 +443,12 @@
   <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability consultant — check their connections.</div>
 
   <!-- Replaced "Mission" label with full instruction text -->
-  <div class="ln-taskbar">
-    <span class="tag">Use your mutual connections to find a sustainability consultant and connect with them!</span>
+<div class="ln-taskbar">
+  <span class="tag">Mission</span>
+  <div class="mission-text">
+    Use your mutual connections to find a sustainability consultant and connect with them!
   </div>
+</div>
 
   <div id="lnScreens" class="ln-screen" tabindex="0" aria-live="polite"></div>
 
@@ -519,7 +552,9 @@ function checkStage3(){
   const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
   const yearOk = (year === CONFIG.quake.year);
   if (nameOk && yearOk){
-    msg.textContent = "Correct!"; msg.className = "small ok"; setTimeout(()=>{ showGreen(); }, 300);
+    msg.textContent = "Correct!"; 
+    msg.className = "small ok"; 
+    setTimeout(()=>{ showGreen(); }, 300);
   } else {
     msg.className = "small bad";
     if (!nameOk && !yearOk) msg.textContent = "We need the quake name and the year.";
@@ -724,24 +759,30 @@ function buildProfileSection(p){
 
   const isYou = p.id === 'you';
 
-  const top = document.createElement('div');
-  top.innerHTML = `
-    <div class="ln-cover"></div>
-    <div class="ln-pad ln-head">
-      <div class="ln-ava" aria-hidden="true"><span class="emo">${p.emoji || "🦉"}</span></div>
-      <div style="flex:1">
-        <div class="ln-name">${p.name} ${p.target ? '✅' : ''}</div>
-        <div class="ln-headline">${p.headline}</div>
-        <div class="ln-buttons">
-          ${isYou ? '' : '<button class="ln-btn primary">Connect</button>'}
-          <button class="ln-btn ln-more">More</button>
-        </div>
+const top = document.createElement('div');
+top.innerHTML = `
+  <div class="ln-cover"></div>
+  <div class="ln-pad ln-head">
+    <div class="ln-ava" aria-hidden="true"><span class="emo">${p.emoji || "🦉"}</span></div>
+    <div class="ln-head-main">
+      <div class="ln-name">${p.name}</div>
+      <div class="ln-headline">${p.headline}</div>
+      <div class="ln-submeta">
+        ${p.company ? `${p.company}` : ''}${p.school ? ` · ${p.school}` : ''}${p.loc ? ` · ${p.loc}` : ''}
       </div>
+      <div class="ln-stats">${(p.connections?.length ?? 0) + 100} connections</div>
+      <div class="ln-buttonbar">
+  		${isYou ? '' : '<button class="ln-btn blue" data-action="connect" aria-label="Connect with ' + p.name + '">Connect</button>'}
+  		<button class="ln-btn ghost" aria-label="Message ${p.name}">Message</button>
+  		<button class="ln-btn ln-more" aria-label="More actions">···</button>
+   </div>
+
     </div>
-    <div class="ln-section" style="border-top:0">
-      <div class="ln-meta">${p.loc || ''}</div>
-    </div>
-  `;
+  </div>
+  <div class="ln-section" style="border-top:0">
+    <div class="ln-meta">${p.loc || ''}</div>
+  </div>
+`;
   sec.appendChild(top);
 
   const about = document.createElement('div');
@@ -859,22 +900,26 @@ function buildProfileSection(p){
   sec.appendChild(conWrap);
 
   // Connect behavior — allow Sustainability/Environmental Engineer to advance
-  const primaryBtn = top.querySelector('.ln-btn.primary');
-  if (primaryBtn) {
-    primaryBtn.addEventListener('click', ()=>{
-      const headline = (p.headline || '').toLowerCase();
-      const isSustOrEnv =
-        headline.includes('sustainability engineer') ||
-        headline.includes('environmental engineer');
+const connectBtn = top.querySelector('[data-action="connect"]');
+if (connectBtn) {
+  connectBtn.addEventListener('click', ()=>{
+    const headline = (p.headline || '').toLowerCase();
+    const isSustOrEnv =
+      headline.includes('sustainability engineer') ||
+      headline.includes('environmental engineer');
 
-      if (p.target || isSustOrEnv){
-        lnSheet.classList.add('active');
-      } else {
-        showToast("This isn’t the sustainability consultant — check their connections.");
-        primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
-      }
-    });
-  }
+    if (p.target || isSustOrEnv){
+      lnSheet.classList.add('active');
+    } else {
+      showToast("This isn’t the sustainability consultant — check their connections.");
+      connectBtn.animate(
+        [{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],
+        {duration:180}
+      );
+    }
+  });
+}
+
 
   // reveal connections when scrolled into view
   const io = new IntersectionObserver(entries=>{
@@ -913,3 +958,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+

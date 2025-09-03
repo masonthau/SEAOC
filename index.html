@@ -442,8 +442,8 @@ button:active{transform:translateY(1px)}
        ========================= -->
   <section id="stage3" class="card stage">
     <h2>Stage 3 — The M'app'athon</h2>
-    <p class="small"><strong>You've found the coordinates! (37.04, -121.88)</strong></p>
-    <p class="small">Click on one of the links below to open them in the maps app of your choice. Then identify the famous EQ whose epicenter lay at this point.</p>
+    <p class="small"><strong>You've found the hidden coordinates! (37.04, -121.88)</strong></p>
+    <p class="small">Click on one of the links below to automatically go to this location in the maps app of your choice. Then identify the famous EQ whose epicenter lay at this point.</p>
 
     <div class="linkrow" id="mapLinks"></div>
 
@@ -457,7 +457,7 @@ button:active{transform:translateY(1px)}
 
     <div id="msg3" class="small" style="margin-top:.4rem;"></div>
     <button id="hintBtn3" class="mutebtn hidden" onclick="toggleHint(3)">Hint</button>
-    <div id="hint3" class="hint">Use your maps app with the coordinates; the epicenter belongs to a well-known Bay Area quake.</div>
+    <div id="hint3" class="hint">If you're curious where most people were when this EQ took place, they were watching the game.</div>
   </section>
 
   <div id="green" class="greenscreen">
@@ -637,14 +637,17 @@ const PROFILES = {
   you: {
     id:"you", name:"You", emoji:"🦉",
     headline:"Structural Engineer — 3 yrs",
-    about:"Structural Engineer (3 yrs). You’ve stepped into a major role on your company’s sustainability committee and need an environmental (LCA) consultant for a new case study.",
-    experience:["Structural Engineer — Firm A (3 yrs)"],
+    about:"Practicing structural engineer with 3 years of work experience. I've recently stepped into a major role on my company’s sustainability committee and need an environmental (LCA) consultant for a new case study.",
+    experience:["Structural Engineer — Quality Engineers (3 yrs)"],
     skills:["Embodied Carbon","LEED","Coordination"],
     loc:"San Francisco Bay Area",
-    company:"Firm A", school:"Cal Poly",
+    company:"Quality Engineers", school:"UC Berkeley",
     connections:["A","B","G"],
-    connectionsCount: 800 // 500+
+    connectionsCount: 800 // 531
   },
+
+  /* Mostly structural, a couple geotechs, and exactly two sustainability consultants (E & H) */
+
   A: { id:"A", name:"Maya Chen", emoji:"🦊",
     headline:"Structural Engineer — GreenBuild Inc.",
     about:"Low-carbon structure, mix optimization, EPD review.",
@@ -652,13 +655,17 @@ const PROFILES = {
     loc:"San Jose, CA", company:"GreenBuild Inc.", school:"UC Berkeley",
     connections:["H","F","C"], connectionsCount: 420
   },
+
+  /* Sustainability consultant #1 (includes 'Sustainability Engineer' keyword for game logic) */
   H: { id:"H", name:"Lina Petrova", emoji:"🐨",
-    headline:"Sustainability Engineer — EcoDesign",
-    about:"Coordinates certifications and embodied-carbon targets across projects.",
-    experience:["Sustainability Engineer — EcoDesign (6 yrs)"], skills:["LEED AP BD+C","Whole-Building LCA","EPDs"],
+    headline:"Sustainability Engineer — Consultant",
+    about:"Independent consultant coordinating certifications and embodied-carbon targets across projects.",
+    experience:["Sustainability Consultant — EcoDesign (6 yrs)"], skills:["LEED AP BD+C","Whole-Building LCA","EPDs"],
     loc:"Palo Alto, CA", company:"EcoDesign", school:"Stanford",
     connections:["E","A","J"], connectionsCount: 600
   },
+
+  /* Sustainability consultant #2 (target) */
   E: { id:"E", name:"Priya Natarajan", emoji:"🕊️",
     headline:"Environmental Engineer — LCA Consultant",
     about:"Independent consultant focusing on whole-building LCAs and EPD reviews.",
@@ -666,20 +673,25 @@ const PROFILES = {
     loc:"San Jose, CA", company:"LCA Studio", school:"UC Davis",
     connections:["H","C","M"], target:true, connectionsCount: 510
   },
+
+  /* Former Civil → now Structural */
   B: { id:"B", name:"Noah Kim", emoji:"🐼",
-    headline:"Civil Engineer — Water Resources",
-    about:"Watershed modeling and stormwater BMPs.",
-    experience:["Civil Engineer — FlowWorks (4 yrs)"], skills:["Hydrology","SWMM","H&H"],
+    headline:"Structural Engineer — FlowWorks",
+    about:"Watershed-adjacent projects led me to seismic + structural retrofits; now full-time structural.",
+    experience:["Structural Engineer — FlowWorks (4 yrs)"], skills:["Embodied Carbon","Retrofit","H&H"],
     loc:"Oakland, CA", company:"FlowWorks", school:"UCLA",
     connections:["K","C","L"], connectionsCount: 300
   },
+
+  /* Former Municipal Civil → now Structural */
   G: { id:"G", name:"Ravi Singh", emoji:"🐢",
-    headline:"Municipal Civil Engineer — Site/Grading",
-    about:"Permitting and utilities coordination.",
-    experience:["Civil Engineer — CityWorks (6 yrs)"], skills:["Grading","Utilities","Permits"],
+    headline:"Structural Engineer — CityWorks",
+    about:"From site/utility coordination into building structure—focusing on seismic detailing.",
+    experience:["Structural Engineer — CityWorks (6 yrs)"], skills:["Seismic Detailing","Coordination","Permits"],
     loc:"San Mateo, CA", company:"CityWorks", school:"San Jose State",
     connections:["L","K","F"], connectionsCount: 250
   },
+
   F: { id:"F", name:"Alex Rossi", emoji:"🦌",
     headline:"Structural Engineer — Bridges",
     about:"Long-span steel bridges and fatigue.",
@@ -687,20 +699,26 @@ const PROFILES = {
     loc:"Sacramento, CA", company:"SpanWorks", school:"Cal Poly",
     connections:["A","L","K"], connectionsCount: 380
   },
+
+  /* Former Environmental Engineer → now Structural */
   C: { id:"C", name:"Sara Ortiz", emoji:"🦦",
-    headline:"Environmental Engineer — Compliance",
-    about:"Air & water compliance; embodied-carbon curiosity.",
-    experience:["Env Engineer — ClearSky (6 yrs)"], skills:["NEPA","Permitting","EPDs"],
+    headline:"Structural Engineer — ClearSky",
+    about:"Transitioned from compliance to structural delivery with a focus on low-carbon specs.",
+    experience:["Structural Engineer — ClearSky (6 yrs)"], skills:["Specs","EPDs","Coordination"],
     loc:"San Francisco, CA", company:"ClearSky", school:"UC Santa Cruz",
     connections:["A","B","M"], connectionsCount: 420
   },
+
+  /* Former Civil Transportation → now Structural */
   K: { id:"K", name:"Ben Zhao", emoji:"🦉",
-    headline:"Civil Engineer — Transportation",
-    about:"Complete-streets & transit corridors.",
-    experience:["Civil — MetroWorks (5 yrs)"], skills:["Roadway","Transit","Traffic"],
+    headline:"Structural Engineer — MetroWorks",
+    about:"Moved from complete-streets design into structural, focusing on stations and platforms.",
+    experience:["Structural — MetroWorks (5 yrs)"], skills:["Concrete","Transit Structures","Coordination"],
     loc:"Fremont, CA", company:"MetroWorks", school:"UC Irvine",
     connections:["B","G","F"], connectionsCount: 190
   },
+
+  /* Geotech #1 (kept) */
   L: { id:"L", name:"Nina Alvarez", emoji:"🦊",
     headline:"Geotechnical Engineer — TerraLab",
     about:"Ground improvement & foundations.",
@@ -708,24 +726,30 @@ const PROFILES = {
     loc:"San Leandro, CA", company:"TerraLab", school:"UC Davis",
     connections:["G","F","C"], connectionsCount: 260
   },
+
+  /* Former Environmental Engineer → now Structural */
   J: { id:"J", name:"Marco De Santis", emoji:"🐰",
-    headline:"Environmental Engineer — Wastewater",
-    about:"Process modeling for WWTPs.",
-    experience:["Process Eng — ClearWater (9 yrs)"], skills:["Process","Modeling","Permitting"],
+    headline:"Structural Engineer — ClearWater",
+    about:"Process modeling background, now applying that rigor to structural analysis and delivery.",
+    experience:["Structural Engineer — ClearWater (9 yrs)"], skills:["Analysis","Modeling","Permitting"],
     loc:"San Francisco, CA", company:"ClearWater", school:"USF",
     connections:["H","N","C"], connectionsCount: 340
   },
+
+  /* Former Energy/Carbon Analyst → now Structural */
   M: { id:"M", name:"Amira Hassan", emoji:"🕊️",
-    headline:"Energy & Carbon Analyst — Freelance",
-    about:"Embodied & operational carbon studies.",
-    experience:["Analyst — Freelance (4 yrs)"], skills:["WBLCA","Energy","Carbon"],
+    headline:"Structural Engineer — Freelance",
+    about:"Bringing embodied & operational carbon literacy into structural design packages.",
+    experience:["Structural — Freelance (4 yrs)"], skills:["WBLCA","Structural Design","Carbon"],
     loc:"Sunnyvale, CA", company:"Freelance", school:"SJSU",
     connections:["C","E","K"], connectionsCount: 280
   },
+
+  /* Geotech #2 (converted from Environmental Planner) */
   N: { id:"N", name:"Ethan Morales", emoji:"🐼",
-    headline:"Environmental Planner",
-    about:"CEQA/NEPA documents and stakeholder engagement.",
-    experience:["Planner — GreenPath (6 yrs)"], skills:["CEQA","NEPA","Outreach"],
+    headline:"Geotechnical Engineer — GreenPath",
+    about:"From planning to subsurface: foundations, site investigations, and seismic hazards.",
+    experience:["Geotechnical Engineer — GreenPath (6 yrs)"], skills:["Soils","Site Investigations","Seismic Hazards"],
     loc:"Berkeley, CA", company:"GreenPath", school:"UC Berkeley",
     connections:["J","L","K"], connectionsCount: 310
   }

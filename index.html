@@ -103,10 +103,11 @@
   .hint{color:#e8dcbb;font-size:.95rem;margin-top:.5rem;display:none}
   .hidden{display:none !important}
 
-  /* Report (Stage 2) — now on dark background, shorter */
-  .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+  /* Report (Stage 2) — adjusted spacing for mobile typing comfort */
+  .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12); margin-top:.6rem}
   .report{
-    background:transparent; color:var(--lightink); padding:14px 12px; min-height:40vh;
+    background:transparent; color:var(--lightink); padding:14px 12px 48px; /* extra bottom pad */
+    min-height:36vh; /* slightly shorter so inputs + keyboard don't fully cover */
     font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   }
   .report h3{margin:0 0 8px 0; font-size:18px}
@@ -172,7 +173,7 @@
   .ln-toast.show{display:block; animation:toastfade .25s ease}
   @keyframes toastfade{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 
-  /* Mission banner (updated wording) */
+  /* Mission banner — replaced text per request */
   .ln-taskbar{
     position:sticky; top:56px; z-index:6;
     background:#fff; border-bottom:1px solid var(--ln-border);
@@ -180,11 +181,7 @@
   }
   .ln-taskbar .tag{
     background:#eaf3fe; color:#1f2328; border:1px solid #d3e3ff;
-    padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; flex:0 0 auto;
-  }
-  .mission-text{
-    flex:1 1 auto; font-weight:800; font-size:14px; line-height:1.25;
-    text-align:left; white-space:normal; letter-spacing:0; word-spacing:0;
+    padding:6px 10px; border-radius:12px; font-size:13px; font-weight:800; flex:0 0 auto;
   }
 
   .ln-screen{flex:1; overflow:auto; -webkit-overflow-scrolling:touch}
@@ -273,17 +270,18 @@
 
   <header>
     <h1>Survivor Coronado: Immunity Challenge</h1>
-    <p class="sub">Welcome to your first and final immunity challenge — complete each stage of puzzles to survive this round.</p>
+    <p class="sub">Welcome to your first and only immunity challenge — complete each stage of puzzles to move on to the next round.</p>
   </header>
 
   <!-- =========================
        STAGE 1 — LinkedIn intro
        ========================= -->
   <section id="stage1" class="card stage active">
-    <h2>Stage 1 — Connection Web</h2>
+    <h2>Stage 1 — A Mutual Connections Maze</h2>
     <p class="small">
-      You’re a <strong>Structural Engineer (3 yrs)</strong> who’s just taken on a major role in your company’s sustainability committee.
-      Your mission is to <strong>find a sustainability consultant and connect with them</strong> to kick off a building LCA case study.
+      You’ve a just taken on a major role in your company’s new sustainability committee. Your first task: put together the firm's first ever LCA, using a past project.
+      You've been cleared to bring in an expert consultant to get some advice and examples. You could try cold calling, but then realize this is the perfect opportunity to do some online networking.
+      Using your LinkedIn connections, find a mutual connection who can advise your company and provide an example LCA document for reference.
     </p>
     <div class="row" style="grid-template-columns:1fr;">
       <button id="openLinkedInBtn" class="ln-open-btn" type="button">Open LinkedIn</button>
@@ -291,30 +289,35 @@
   </section>
 
   <!-- =========================
-       STAGE 2 — LCA report reveal (shorter, dark)
+       STAGE 2 — LCA report reveal
        ========================= -->
   <section id="stage2" class="card stage">
     <h2>Stage 2 — The Hidden Message</h2>
-    <p class="small">Switch your device to <strong>Dark Mode</strong> — certain figures in this case-study summary will glow red.</p>
+    <p class="small">You've advanced to the second challenge! You are reading through the LCA report you just received when you come across a secret message, hidden within the report. 
+        Invisible in the light, but shining in the dark, you'll find the secret coordinates if your phone settings hit the mark.</p>
+
+    <!-- Hint ABOVE the report (appears after delay) -->
+    <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
+    <div id="hint2" class="hint">Switch your phone into <strong>dark mode</strong> to reveal the coordinates.</div>
 
     <div class="gridwrap">
       <div class="report" role="article" aria-label="LCA Case Study Report">
         <h3>Case Study LCA — Harbor Offices</h3>
         <div class="meta">
-          Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez<span class="coord" aria-hidden="true">37</span>
+          Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez
         </div>
 
         <div class="sec">
           <h4>Goal & Scope</h4>
           <p>
-            Quantify embodied carbon (GWP100) for structure & envelope at Design Development per EN 15804+A2. System boundary: A1–A3<span class="coord" aria-hidden="true">.0</span> with placeholders for A4/A5<span class="coord" aria-hidden="true">4</span>.
+            Quantify embodied carbon (GWP100) for structure & envelope at Design Development per EN 15804+A2. System boundary: A1–A3 with placeholders for A4/A5.
           </p>
         </div>
 
         <div class="sec">
           <h4>Key Inputs</h4>
           <p>
-            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content<span class="coord" aria-hidden="true">, </span> aluminum cladding with supplier EPDs.
+            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content, aluminum cladding with supplier EPDs.
           </p>
         </div>
 
@@ -328,22 +331,35 @@
               <tr><td>Cladding</td><td>60</td><td>Manufacturer EPD</td></tr>
             </tbody>
             <tfoot>
-              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²<span class="coord" aria-hidden="true">-121</span></td></tr>
+              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²</td></tr>
             </tfoot>
           </table>
-          <div class="note">Uncertainty: cement content & transport distance<span class="coord" aria-hidden="true">.</span> References: ISO 14044; CLF guidance<span class="coord" aria-hidden="true">88</span></div>
+          <div class="note">Uncertainty: cement content & transport distance. References: ISO 14044; CLF guidance.</div>
+        </div>
+
+        <!-- All coordinate digits moved LOWER in the report for easier viewing on phones while typing -->
+        <div class="sec">
+          <h4>Appendix Note</h4>
+          <p>
+            QA check ID: <span class="coord" aria-hidden="true">37</span><span class="coord" aria-hidden="true">.0</span><span class="coord" aria-hidden="true">4</span>,
+            Project archive ref: <span class="coord" aria-hidden="true">-121</span><span class="coord" aria-hidden="true">.</span><span class="coord" aria-hidden="true">88</span>
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <input id="lat" type="number" step="any" placeholder="Latitude">
-      <input id="lon" type="number" step="any" placeholder="Longitude">
+    <!-- Inputs as separate lines, in requested order: Longitude, Latitude, then Submit -->
+    <div class="row" style="grid-template-columns:1fr;">
+      <input id="lon" type="number" step="any" placeholder="Longitude (e.g., -121.88)">
+    </div>
+    <div class="row" style="grid-template-columns:1fr;">
+      <input id="lat" type="number" step="any" placeholder="Latitude (e.g., 37.04)">
+    </div>
+    <div class="row" style="grid-template-columns:1fr;">
       <button onclick="checkStage2()">Submit</button>
     </div>
+
     <div id="msg2" class="small"></div>
-    <button id="hintBtn2" class="mutebtn hidden" onclick="toggleHint(2)">Hint</button>
-    <div id="hint2" class="hint">Look for red numbers sprinkled through the summary.</div>
   </section>
 
   <!-- =========================
@@ -351,7 +367,9 @@
        ========================= -->
   <section id="stage3" class="card stage">
     <h2>Stage 3 — The M'app'athon</h2>
-    <p class="small">Place the coordinates on a map — then name the quake and year.</p>
+    <p class="small"><strong>You've found the coordinates! (37.04, -121.88)</strong></p>
+    <p class="small">Click on one of the links below to open them in the maps app of your choice. Then identify the famous EQ whose epicenter lay at this point.</p>
+
     <div class="linkrow" id="mapLinks"></div>
 
     <div class="row">
@@ -394,9 +412,9 @@
 
   <div id="lnToast" class="ln-toast" role="status" aria-live="polite">This isn’t the sustainability consultant — check their connections.</div>
 
+  <!-- Replaced "Mission" label with full instruction text -->
   <div class="ln-taskbar">
-    <span class="tag">Mission</span>
-    <div class="mission-text">Find a <strong>sustainability consultant</strong> and <strong>connect</strong> with them</div>
+    <span class="tag">Use your mutual connections to find a sustainability consultant and connect with them!</span>
   </div>
 
   <div id="lnScreens" class="ln-screen" tabindex="0" aria-live="polite"></div>
@@ -704,6 +722,8 @@ function buildProfileSection(p){
   sec.setAttribute('role','region');
   sec.setAttribute('aria-label', `${p.name} profile`);
 
+  const isYou = p.id === 'you';
+
   const top = document.createElement('div');
   top.innerHTML = `
     <div class="ln-cover"></div>
@@ -713,7 +733,7 @@ function buildProfileSection(p){
         <div class="ln-name">${p.name} ${p.target ? '✅' : ''}</div>
         <div class="ln-headline">${p.headline}</div>
         <div class="ln-buttons">
-          <button class="ln-btn primary">Connect</button>
+          ${isYou ? '' : '<button class="ln-btn primary">Connect</button>'}
           <button class="ln-btn ln-more">More</button>
         </div>
       </div>
@@ -815,7 +835,7 @@ function buildProfileSection(p){
   } else {
     ids.forEach(cid=>{
       const c = PROFILES[cid];
-      if(!c) return;
+      if(!c || c.id === 'you') return;
       const row = document.createElement('button');
       row.className = 'ln-result ln-connrow';
       row.setAttribute('aria-label', `Open ${c.name} profile`);
@@ -838,16 +858,23 @@ function buildProfileSection(p){
   conWrap.appendChild(conList);
   sec.appendChild(conWrap);
 
-  // Connect behavior
+  // Connect behavior — allow Sustainability/Environmental Engineer to advance
   const primaryBtn = top.querySelector('.ln-btn.primary');
-  primaryBtn.addEventListener('click', ()=>{
-    if(p.target){
-      lnSheet.classList.add('active');
-    } else {
-      showToast("This isn’t the sustainability consultant — check their connections.");
-      primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
-    }
-  });
+  if (primaryBtn) {
+    primaryBtn.addEventListener('click', ()=>{
+      const headline = (p.headline || '').toLowerCase();
+      const isSustOrEnv =
+        headline.includes('sustainability engineer') ||
+        headline.includes('environmental engineer');
+
+      if (p.target || isSustOrEnv){
+        lnSheet.classList.add('active');
+      } else {
+        showToast("This isn’t the sustainability consultant — check their connections.");
+        primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
+      }
+    });
+  }
 
   // reveal connections when scrolled into view
   const io = new IntersectionObserver(entries=>{

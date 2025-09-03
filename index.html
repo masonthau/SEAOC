@@ -344,9 +344,8 @@ button:active{transform:translateY(1px)}
   <section id="stage1" class="card stage active">
     <h2>Stage 1 — A Mutual Connections Maze</h2>
     <p class="small">
-      You’ve a just taken on a major role in your company’s new sustainability committee. Your first task: put together the firm's first ever LCA, using a past project.
-      You've been cleared to bring in an expert consultant to get some advice and examples. You could try cold calling, but then realize this is the perfect opportunity to do some online networking.
-      Using your LinkedIn connections, find a mutual connection who can advise your company and provide an example LCA document for reference.
+      You’ve just taken on a major role in your company’s new sustainability committee, and have been asked to put together the firm's first ever LCA.
+      You'd like to start by finding a sustainability consultant to advise you and provide resources. You could try cold-calling, but decide to utilize your online connections on LinkedIn instead. Click the link below to get started!
     </p>
     <div class="row" style="grid-template-columns:1fr;">
       <button id="openLinkedInBtn" class="ln-open-btn" type="button">Open LinkedIn</button>
@@ -368,22 +367,27 @@ button:active{transform:translateY(1px)}
     <div class="gridwrap">
       <div class="report" role="article" aria-label="LCA Case Study Report">
         <h3>Case Study LCA — Harbor Offices</h3>
+
         <div class="meta">
           Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez
+          <!-- Hidden coordinate preamble -->
+          <span class="coord">lat</span><span class="coord">37.04</span><span class="coord">long</span><span class="coord">-121.88</span>
         </div>
 
         <div class="sec">
           <h4>Goal & Scope</h4>
           <p>
-            Quantify embodied carbon (GWP100) for structure & envelope at Design Development per EN 15804+A2.
-            System boundary: A1–A3 with placeholders for A4/A5.
+            Quantify embodied carbon (GWP100) for structure &amp; envelope at Design Development per EN 15804+A2.
+            System boundary covers A1–A3, with placeholders for A4/A5. This DD snapshot aims to establish a baseline for
+            mix optimization, procurement planning, and envelope selection aligned with the project’s carbon budget.
           </p>
         </div>
 
         <div class="sec">
           <h4>Key Inputs</h4>
           <p>
-            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content, aluminum cladding with supplier EPDs.
+            Concrete mixes include 30–40% SCM; reinforcing steel is EAF with ~95% recycled content; aluminum cladding uses
+            manufacturer EPDs. Assumptions reflect regional supply chains and typical transport distances confirmed with the CM.
           </p>
         </div>
 
@@ -401,16 +405,16 @@ button:active{transform:translateY(1px)}
             </tfoot>
           </table>
           <div class="note">
-            Uncertainty: cement content &amp; transport distance. References: ISO 14044; CLF guidance.
+            Uncertainty drivers: cement content variability and haul distances. References: ISO 14044; CLF guidance.
           </div>
         </div>
 
-        <!-- Appendix where the hidden coordinates are embedded (only these turn red in dark mode) -->
         <div class="sec">
           <h4>Appendix — Notes &amp; Citations</h4>
           <ul>
-            <li>Standards cross-check per EN 15804+A2 Rev <span class="coord">37.04</span></li>
-            <li>Transport log ID: <span class="coord">-121.88</span> (internal reference).</li>
+            <li>Mix comparison memo archived; ready-mix supplier confirmations on file.</li>
+            <li>Transport assumptions (road/sea) documented in logistics addendum.</li>
+            <li>All EPDs verified current as of submittal date.</li>
           </ul>
         </div>
       </div>

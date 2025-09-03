@@ -107,8 +107,8 @@ button:active{transform:translateY(1px)}
 /* adjusted spacing for mobile typing comfort */
 .gridwrap{position:relative;width:100%;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12); margin-top:.6rem}
 .report{
-  background:transparent; color:var(--lightink); padding:14px 12px 48px; /* extra bottom pad */
-  min-height:36vh; /* slightly shorter so inputs + keyboard don't fully cover */
+  background:transparent; color:var(--lightink); padding:14px 12px 48px;
+  min-height:36vh;
   font:15px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
 .report h3{margin:0 0 8px 0; font-size:18px}
@@ -123,10 +123,11 @@ button:active{transform:translateY(1px)}
 .report tfoot td{font-size:12px; color:rgba(255,255,255,.7)}
 .report .note{color:rgba(255,255,255,.7); font-size:12px}
 
-/* Hidden coordinate glyphs: subtle in light mode; bright red glow in dark mode */
-.coord{color:var(--lightink); font-weight:700; user-select:none}
-@media (prefers-color-scheme: dark){
-  .coord{color:#ff4d5e; text-shadow:0 0 6px rgba(255,77,94,.35)}
+/* Coordinate glyphs: ALWAYS bright red; nothing else uses this color */
+.coord{
+  color:#ff4d5e !important;
+  font-weight:800; user-select:none;
+  text-shadow:0 0 6px rgba(255,77,94,.35);
 }
 
 /* Greenscreen winner */
@@ -193,17 +194,18 @@ button:active{transform:translateY(1px)}
 
 /* ========== ANCHOR: Profile header layout & spacing ========== */
 .ln-cover{height:96px;background:linear-gradient(135deg,#dfeafb,#d5f2ea)}
-.ln-head{display:flex; align-items:flex-start; gap:12px}
+/* Column layout so name/meta appear BELOW avatar */
+.ln-head{display:flex; flex-direction:column; align-items:flex-start; gap:8px}
 .ln-ava{
   width:74px;height:74px;border-radius:50%;
-  background:#fff; display:grid; place-items:center; margin-top:-36px;
+  background:#fff; display:grid; place-items:center; margin-top:-36px; margin-left:12px;
   box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 3px #fff, 0 0 0 5px #dfe9f7;
   flex:0 0 74px;
 }
 .ln-ava .emo{font-size:32px; line-height:1}
 .ln-head-main{
   display:flex; flex-direction:column; align-items:flex-start;
-  gap:6px; width:100%; min-width:0;
+  gap:6px; width:100%; min-width:0; padding-left:12px;
 }
 .ln-name{font-weight:800; font-size:18px}
 .ln-headline{color:#6b7480; font-size:13px}
@@ -272,7 +274,7 @@ button:active{transform:translateY(1px)}
 .ln-connlist .ln-connrow{
   padding:12px; border:1px solid var(--ln-border); border-radius:12px;
   margin:10px 0; box-shadow:0 2px 8px rgba(10,102,194,.06);
-  display:flex; gap:12px; align-items:center;
+  display:flex; gap:12px; align-items:center; user-select:none;
 }
 .ln-connrow[role="button"]{cursor:pointer}
 
@@ -533,7 +535,6 @@ function showStage(id){
   if (id === "stage3") startHintTimer(3);
 }
 
-
 function showGreen(){
   document.querySelectorAll(".stage").forEach(el=>el.classList.remove("active"));
   document.getElementById("green").classList.add("active");
@@ -626,7 +627,7 @@ const PROFILES = {
     loc:"San Francisco Bay Area",
     company:"Firm A", school:"Cal Poly",
     connections:["A","B","G"],
-    connectionsCount: 800 // popular 500+
+    connectionsCount: 800 // 500+
   },
   A: { id:"A", name:"Maya Chen", emoji:"🦊",
     headline:"Structural Engineer — GreenBuild Inc.",
@@ -714,9 +715,7 @@ const PROFILES = {
   }
 };
 
-/* Mutual connection count + display
-   - you: "500+ connections" (bold, own line)
-   - others: "N mutual connections" (based on distance) */
+/* Mutual connection count + display */
 function mutualCount(person){
   const youConns = new Set(PROFILES.you.connections);
   const theirs = new Set(person.connections || []);
@@ -727,12 +726,11 @@ function degreeFromYou(personId){
   if (personId === 'you') return 0;
   const youSet = new Set(PROFILES.you.connections);
   if (youSet.has(personId)) return 1;
-  // degree 2: if anyone you connect to connects to them
   for (const id of PROFILES.you.connections){
     const p = PROFILES[id];
     if (p && (p.connections||[]).includes(personId)) return 2;
   }
-  return 3; // default >=3
+  return 3;
 }
 function mutualCountDisplay(p){
   if (p.id === 'you') return `<div class="ln-connections-line">${p.connectionsCount >= 500 ? '500+ connections' : (p.connectionsCount + ' connections')}</div>`;
@@ -817,13 +815,11 @@ function buildProfileSection(p){
   `;
   sec.appendChild(about);
 
-  /* Highlights */
+  /* Highlights (REMOVE mutual-connection line per request) */
   const hi = document.createElement('div');
-  const m = mutualCount(p);
   hi.innerHTML = `
     <div class="ln-section-title">Highlights</div>
     <div class="ln-section">
-      <div class="ln-highlight">${iconUsers()} <div><strong>${m}</strong> mutual connection${m===1?'':'s'}</div></div>
       <div class="ln-highlight">${iconSpark()} <div>Open to collaborating on low-carbon projects</div></div>
     </div>
   `;
@@ -934,8 +930,31 @@ function iconSchool(){return `<svg width="16" height="16" viewBox="0 0 24 24" fi
 function iconSpark(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M11 2l1.5 5H18l-4 3 1.5 5L11 12l-4.5 3L8 10 4 7h5.5L11 2z"/></svg>`;}
 function iconUsers(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4Zm-8 1a4 4 0 10-4-4 4 4 0 004 4Zm0 2c-3.33 0-10 1.67-10 5v3h12v-3c0-3.33-6.67-5-10-5Zm8 0c-.53 0-1.14.03-1.79.08A7.2 7.2 0 0120 20v2h4v-3c0-3.33-6.67-5-10-5Z"/></svg>`;}
 
-/* Event delegation for mobile reliability */
+/* ========= Mobile-reliable event handling with drag guard ========= */
+const dragState = {down:false, startX:0, startY:0, drag:false};
+const DRAG_THRESH = 8;
+
+lnScreens.addEventListener('pointerdown', (e)=>{
+  dragState.down = true;
+  dragState.drag = false;
+  dragState.startX = e.clientX;
+  dragState.startY = e.clientY;
+}, {passive:true});
+
+lnScreens.addEventListener('pointermove', (e)=>{
+  if(!dragState.down) return;
+  const dx = Math.abs(e.clientX - dragState.startX);
+  const dy = Math.abs(e.clientY - dragState.startY);
+  if (dx > DRAG_THRESH || dy > DRAG_THRESH) dragState.drag = true;
+}, {passive:true});
+
+lnScreens.addEventListener('pointerup', ()=>{
+  dragState.down = false;
+}, {passive:true});
+
+/* Single delegated click handler that ignores clicks after a drag */
 lnScreens.addEventListener('click', (e)=>{
+  if (dragState.drag) return; // treat as scroll, not click
   const btn = e.target.closest('[data-action]');
   if (btn){
     const sec = e.target.closest('.ln-card');
@@ -949,14 +968,8 @@ lnScreens.addEventListener('click', (e)=>{
     showProfile(openRow.dataset.open);
   }
 });
-lnScreens.addEventListener('touchend', (e)=>{
-  const openRow = e.target.closest('[data-open]');
-  if (openRow){
-    e.preventDefault(); // avoid 300ms delay / ghost click
-    showProfile(openRow.dataset.open);
-  }
-}, {passive:false});
 
+/* Actions */
 function handleProfileAction(personId, action){
   const p = PROFILES[personId];
   if (!p) return;
@@ -971,7 +984,7 @@ function handleProfileAction(personId, action){
       showToast("This isn’t the sustainability consultant — check their connections.");
     }
   }
-  // 'message' and 'more' are no-ops for now
+  // 'message' and 'more' remain no-ops
 }
 
 /* Nav + overlay */
@@ -1012,7 +1025,6 @@ function closeLinkedIn(){
 function openSuccessSheet(){
   lnBackdrop.classList.add('active');
   lnSheet.classList.add('active');
-  // focus the primary action for a11y
   const proceed = document.getElementById('lnProceed');
   if (proceed) proceed.focus();
 }
@@ -1027,7 +1039,7 @@ document.getElementById('lnProceed').addEventListener('click', ()=>{
   showStage('stage2');
 });
 
-/* Dismiss on backdrop tap (mobile) */
+/* Dismiss on backdrop tap */
 lnBackdrop.addEventListener('click', closeSuccessSheet);
 
 /* Bind Open LinkedIn button once DOM is ready */
@@ -1035,7 +1047,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('openLinkedInBtn');
   if (btn) {
     btn.addEventListener('click', openLinkedIn);
-    btn.addEventListener('touchend', (e)=>{ e.preventDefault(); openLinkedIn(); }, {passive:false});
   }
 });
 </script>

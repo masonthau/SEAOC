@@ -123,12 +123,22 @@ button:active{transform:translateY(1px)}
 .report tfoot td{font-size:12px; color:rgba(255,255,255,.7)}
 .report .note{color:rgba(255,255,255,.7); font-size:12px}
 
-/* Coordinate glyphs: ALWAYS bright red; nothing else uses this color */
+/* Hidden coordinate glyphs: white by default; turn red ONLY in dark mode */
 .coord{
-  color:#ff4d5e !important;
-  font-weight:800; user-select:none;
-  text-shadow:0 0 6px rgba(255,77,94,.35);
+  color:var(--lightink);
+  font-weight:700;
+  user-select:none;
+  text-shadow:none;
 }
+
+@media (prefers-color-scheme: dark){
+  .coord{
+    color:#ff4d5e;
+    font-weight:800;
+    text-shadow:0 0 6px rgba(255,77,94,.35);
+  }
+}
+
 
 /* Greenscreen winner */
 .greenscreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
@@ -359,21 +369,21 @@ button:active{transform:translateY(1px)}
       <div class="report" role="article" aria-label="LCA Case Study Report">
         <h3>Case Study LCA — Harbor Offices</h3>
         <div class="meta">
-          Prepared by: EcoMetrics Studio<span class="coord" aria-hidden="true">3</span> • DD Snapshot • Reviewer: E. Gomez<span class="coord" aria-hidden="true">7</span>
+          Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez
         </div>
 
         <div class="sec">
           <h4>Goal & Scope</h4>
           <p>
-            Quantify embodied carbon (GWP100)<span class="coord" aria-hidden="true">.</span> for structure & envelope at Design Development per EN 15804+A2.
-            System boundary: A1–A3<span class="coord" aria-hidden="true">0</span> with placeholders for A4/A5<span class="coord" aria-hidden="true">4</span>.
+            Quantify embodied carbon (GWP100) for structure & envelope at Design Development per EN 15804+A2.
+            System boundary: A1–A3 with placeholders for A4/A5.
           </p>
         </div>
 
         <div class="sec">
           <h4>Key Inputs</h4>
           <p>
-            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content<span class="coord" aria-hidden="true">, </span> aluminum cladding with supplier EPDs.
+            Concrete mixes with 30–40% SCM, EAF rebar with 95% recycled content, aluminum cladding with supplier EPDs.
           </p>
         </div>
 
@@ -387,27 +397,26 @@ button:active{transform:translateY(1px)}
               <tr><td>Cladding</td><td>60</td><td>Manufacturer EPD</td></tr>
             </tbody>
             <tfoot>
-              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²<span class="coord" aria-hidden="true">-121</span></td></tr>
+              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²</td></tr>
             </tfoot>
           </table>
           <div class="note">
-            Uncertainty: cement content & transport distance<span class="coord" aria-hidden="true">.</span>
-            References: ISO 14044; CLF guidance<span class="coord" aria-hidden="true">88</span>
+            Uncertainty: cement content &amp; transport distance. References: ISO 14044; CLF guidance.
           </div>
         </div>
 
-        <!-- Scattered appendix + callouts to distribute remaining hidden digits -->
+        <!-- Appendix where the hidden coordinates are embedded (only these turn red in dark mode) -->
         <div class="sec">
-          <h4>Appendix — Notes & Citations</h4>
+          <h4>Appendix — Notes &amp; Citations</h4>
           <ul>
-            <li>Mix comparison memo v<span class="coord" aria-hidden="true">0</span>.<span class="coord" aria-hidden="true">4</span> archived.</li>
-            <li>Internal ref: shipment batch <span class="coord" aria-hidden="true">.</span><span class="coord" aria-hidden="true">88</span> (QA cross-check).</li>
+            <li>Standards cross-check per EN 15804+A2 Rev <span class="coord">37.04</span></li>
+            <li>Transport log ID: <span class="coord">-121.88</span> (internal reference).</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- Inputs as separate lines, in requested order: Latitude, then Longitude, then Submit -->
+    <!-- Inputs as separate lines, Latitude then Longitude, with non-answer examples -->
     <div class="row" style="grid-template-columns:1fr;">
       <input id="lat" type="number" step="any" placeholder="Latitude (e.g., 34.05)">
     </div>
@@ -420,6 +429,7 @@ button:active{transform:translateY(1px)}
 
     <div id="msg2" class="small"></div>
   </section>
+
 
   <!-- =========================
        STAGE 3 — Earthquake

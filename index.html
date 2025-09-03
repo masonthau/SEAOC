@@ -373,14 +373,12 @@ button:active{transform:translateY(1px)}
 
         <div class="meta">
           Prepared by: EcoMetrics Studio • DD Snapshot • Reviewer: E. Gomez
-          <!-- Hidden coordinate preamble -->
-          <span class="coord">lat</span><span class="coord">37.04</span><span class="coord">long</span><span class="coord">-121.88</span>
-        </div>
+  	</div>
 
         <div class="sec">
           <h4>Goal & Scope</h4>
           <p>
-            Quantify embodied carbon (GWP100) for structure &amp; envelope at Design Development per EN 15804+A2.
+            Quantify embodied carbon (GWP100) for structure &amp; envelope at Design Development <span class="coord">Lat</span>per EN 15804+A2.
             System boundary covers A1–A3, with placeholders for A4/A5. This DD snapshot aims to establish a baseline for
             mix optimization, procurement planning, and envelope selection aligned with the project’s carbon budget.
           </p>
@@ -389,7 +387,7 @@ button:active{transform:translateY(1px)}
         <div class="sec">
           <h4>Key Inputs</h4>
           <p>
-            Concrete mixes include 30–40% SCM; reinforcing steel is EAF with ~95% recycled content; aluminum cladding uses
+            Concrete mixes include <span class="coord">37.04</span>–40.56% SCM; reinforcing steel is EAF with ~95% recycled content; aluminum cladding uses
             manufacturer EPDs. Assumptions reflect regional supply chains and typical transport distances confirmed with the CM.
           </p>
         </div>
@@ -397,14 +395,15 @@ button:active{transform:translateY(1px)}
         <div class="sec">
           <h4>A1–A3 Results (per m² GFA)</h4>
           <table>
-            <thead><tr><th>Package</th><th>GWP (kgCO₂e)</th><th>Note</th></tr></thead>
+            <thead><tr><th>Package</th><th>GWP (kgCO₂e)</th><th><span class="coord">Long</span>Note</th></tr></thead>
             <tbody>
-              <tr><td>Concrete</td><td>152</td><td>SCM substitution</td></tr>
-              <tr><td>Rebar</td><td>41</td><td>EAF route</td></tr>
-              <tr><td>Cladding</td><td>60</td><td>Manufacturer EPD</td></tr>
+              <tr><td>Concrete</td><td>152.91</td><td>SCM substitution</td></tr>
+              <tr><td>Rebar</td><td>41.33</td><td>EAF route</td></tr>
+              <tr><td>Cladding</td><td>60.45</td><td>Manufacturer EPD</td></tr>
+              <tr><td>CLT</td><td><span class="coord">-121.88</span></td><td>n/a</td></tr>
             </tbody>
             <tfoot>
-              <tr><td colspan="3">Total modeled: 253 kgCO₂e/m²</td></tr>
+              <tr><td colspan="3">Total modeled: 132.81 kgCO₂e/m²</td></tr>
             </tfoot>
           </table>
           <div class="note">

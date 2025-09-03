@@ -582,7 +582,9 @@ function checkStage3(){
   const nameOk = CONFIG.quake.names.some(n => nameOnly.includes(n));
   const yearOk = (year === CONFIG.quake.year);
   if (nameOk && yearOk){
-    msg.textContent = "Correct!"; msg.className = "small ok"; setTimeout(()=>{ showGreen(); }, 300);
+    msg.textContent = "Correct!";
+    msg.className = "small ok";
+    setTimeout(()=>{ showGreen(); }, 300);
   } else {
     msg.className = "small bad";
     if (!nameOk && !yearOk) msg.textContent = "We need the quake name and the year.";
@@ -594,29 +596,16 @@ function checkStage3(){
 /* ===============================
    LINKEDIN MOBILE WORKFLOW
    =============================== */
-const lnApp     = document.getElementById('linkedinApp');
-const lnScreens = document.getElementById('lnScreens');
-const lnBackBtn = document.getElementById('lnBack');
-const lnSheet   = document.getElementById('lnSheet');
-const lnToast   = document.getElementById('lnToast');
+const lnApp      = document.getElementById('linkedinApp');
+const lnScreens  = document.getElementById('lnScreens');
+const lnBackBtn  = document.getElementById('lnBack');
+const lnSheet    = document.getElementById('lnSheet');
+const lnBackdrop = document.getElementById('lnBackdrop');
+const lnToast    = document.getElementById('lnToast');
 
-function openLinkedIn(){
-  lnApp.classList.add('active');
-  lnApp.setAttribute('aria-hidden','false');
-  if(!lnScreens.dataset.init){ buildAllProfiles(); lnScreens.dataset.init = "1"; }
-  showProfile('you', {reset:true});
-  lnScreens.focus();
-}
-function closeLinkedIn(){
-  lnApp.classList.remove('active');
-  lnApp.setAttribute('aria-hidden','true');
-  lnStack = [];
-  lnBackBtn.style.display = 'none';
-  lnSheet.classList.remove('active');
-  lnToast.classList.remove('show');
-}
+let lnStack = []; // nav stack
 
-/* helper: shuffle */
+/* Helper: shuffle */
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -626,27 +615,7 @@ function shuffle(arr){
   return a;
 }
 
-/* Degree-based mutual connections helper */
-function degreeFromYou(pid){
-  if (pid === 'you') return 0;
-  const youConns = new Set(PROFILES.you.connections);
-  if (youConns.has(pid)) return 1; // direct
-  // second degree: shares any connection with you
-  const p = PROFILES[pid];
-  if (!p) return 3;
-  for (const c of (p.connections||[])){ if (youConns.has(c)) return 2; }
-  return 3;
-}
-function pseudoRandFromId(id){ return (id.charCodeAt(0) + (id.charCodeAt(1)||0) + (id.charCodeAt(2)||0)) % 10; }
-function mutualNumber(pid){
-  const deg = degreeFromYou(pid);
-  const r = pseudoRandFromId(pid);
-  if (deg === 1) return 12 + (r % 13);   // 12–24 mutuals for 1st degree
-  if (deg === 2) return 3 + (r % 7);     // 3–9 for 2nd degree
-  return 1 + (r % 3);                    // 1–3 otherwise
-}
-
-/* Engineer network (≥3 connections each; reciprocal where sensible; never list "you" in others) */
+/* Profiles */
 const PROFILES = {
   you: {
     id:"you", name:"You", emoji:"🦉",
@@ -656,101 +625,129 @@ const PROFILES = {
     skills:["Embodied Carbon","LEED","Coordination"],
     loc:"San Francisco Bay Area",
     company:"Firm A", school:"Cal Poly",
-    connections:["A","B","G"]
+    connections:["A","B","G"],
+    connectionsCount: 800 // popular 500+
   },
   A: { id:"A", name:"Maya Chen", emoji:"🦊",
     headline:"Structural Engineer — GreenBuild Inc.",
     about:"Low-carbon structure, mix optimization, EPD review.",
     experience:["Structural Engineer — GreenBuild (5 yrs)"], skills:["Concrete Design","EPD Review","LEED"],
     loc:"San Jose, CA", company:"GreenBuild Inc.", school:"UC Berkeley",
-    connections:["H","F","C"]
+    connections:["H","F","C"], connectionsCount: 420
   },
   H: { id:"H", name:"Lina Petrova", emoji:"🐨",
     headline:"Sustainability Engineer — EcoDesign",
     about:"Coordinates certifications and embodied-carbon targets across projects.",
     experience:["Sustainability Engineer — EcoDesign (6 yrs)"], skills:["LEED AP BD+C","Whole-Building LCA","EPDs"],
     loc:"Palo Alto, CA", company:"EcoDesign", school:"Stanford",
-    connections:["E","A","J"]
+    connections:["E","A","J"], connectionsCount: 600
   },
   E: { id:"E", name:"Priya Natarajan", emoji:"🕊️",
     headline:"Environmental Engineer — LCA Consultant",
     about:"Independent consultant focusing on whole-building LCAs and EPD reviews.",
     experience:["Principal — LCA Studio (7 yrs)"], skills:["LCA","EPDs","Carbon Accounting"],
     loc:"San Jose, CA", company:"LCA Studio", school:"UC Davis",
-    connections:["H","C","M"], target:true
+    connections:["H","C","M"], target:true, connectionsCount: 510
   },
   B: { id:"B", name:"Noah Kim", emoji:"🐼",
     headline:"Civil Engineer — Water Resources",
     about:"Watershed modeling and stormwater BMPs.",
     experience:["Civil Engineer — FlowWorks (4 yrs)"], skills:["Hydrology","SWMM","H&H"],
     loc:"Oakland, CA", company:"FlowWorks", school:"UCLA",
-    connections:["K","C","L"]
+    connections:["K","C","L"], connectionsCount: 300
   },
   G: { id:"G", name:"Ravi Singh", emoji:"🐢",
     headline:"Municipal Civil Engineer — Site/Grading",
     about:"Permitting and utilities coordination.",
     experience:["Civil Engineer — CityWorks (6 yrs)"], skills:["Grading","Utilities","Permits"],
     loc:"San Mateo, CA", company:"CityWorks", school:"San Jose State",
-    connections:["L","K","F"]
+    connections:["L","K","F"], connectionsCount: 250
   },
   F: { id:"F", name:"Alex Rossi", emoji:"🦌",
     headline:"Structural Engineer — Bridges",
     about:"Long-span steel bridges and fatigue.",
     experience:["Bridge Engineer — SpanWorks (8 yrs)"], skills:["Steel","Fatigue","Inspection"],
     loc:"Sacramento, CA", company:"SpanWorks", school:"Cal Poly",
-    connections:["A","L","K"]
+    connections:["A","L","K"], connectionsCount: 380
   },
   C: { id:"C", name:"Sara Ortiz", emoji:"🦦",
     headline:"Environmental Engineer — Compliance",
     about:"Air & water compliance; embodied-carbon curiosity.",
     experience:["Env Engineer — ClearSky (6 yrs)"], skills:["NEPA","Permitting","EPDs"],
     loc:"San Francisco, CA", company:"ClearSky", school:"UC Santa Cruz",
-    connections:["A","B","M"]
+    connections:["A","B","M"], connectionsCount: 420
   },
   K: { id:"K", name:"Ben Zhao", emoji:"🦉",
     headline:"Civil Engineer — Transportation",
     about:"Complete-streets & transit corridors.",
     experience:["Civil — MetroWorks (5 yrs)"], skills:["Roadway","Transit","Traffic"],
     loc:"Fremont, CA", company:"MetroWorks", school:"UC Irvine",
-    connections:["B","G","F"]
+    connections:["B","G","F"], connectionsCount: 190
   },
   L: { id:"L", name:"Nina Alvarez", emoji:"🦊",
     headline:"Geotechnical Engineer — TerraLab",
     about:"Ground improvement & foundations.",
     experience:["Geotech — TerraLab (7 yrs)"], skills:["Soils","Deep Foundations","Seismic"],
     loc:"San Leandro, CA", company:"TerraLab", school:"UC Davis",
-    connections:["G","F","C"]
+    connections:["G","F","C"], connectionsCount: 260
   },
   J: { id:"J", name:"Marco De Santis", emoji:"🐰",
     headline:"Environmental Engineer — Wastewater",
     about:"Process modeling for WWTPs.",
     experience:["Process Eng — ClearWater (9 yrs)"], skills:["Process","Modeling","Permitting"],
     loc:"San Francisco, CA", company:"ClearWater", school:"USF",
-    connections:["H","N","C"]
+    connections:["H","N","C"], connectionsCount: 340
   },
   M: { id:"M", name:"Amira Hassan", emoji:"🕊️",
     headline:"Energy & Carbon Analyst — Freelance",
     about:"Embodied & operational carbon studies.",
     experience:["Analyst — Freelance (4 yrs)"], skills:["WBLCA","Energy","Carbon"],
     loc:"Sunnyvale, CA", company:"Freelance", school:"SJSU",
-    connections:["C","E","K"]
+    connections:["C","E","K"], connectionsCount: 280
   },
   N: { id:"N", name:"Ethan Morales", emoji:"🐼",
     headline:"Environmental Planner",
     about:"CEQA/NEPA documents and stakeholder engagement.",
     experience:["Planner — GreenPath (6 yrs)"], skills:["CEQA","NEPA","Outreach"],
     loc:"Berkeley, CA", company:"GreenPath", school:"UC Berkeley",
-    connections:["J","L","K"]
+    connections:["J","L","K"], connectionsCount: 310
   }
 };
 
-let lnStack = []; // nav stack
-
-/* Utilities to compute a bit of “real” data */
+/* Mutual connection count + display
+   - you: "500+ connections" (bold, own line)
+   - others: "N mutual connections" (based on distance) */
+function mutualCount(person){
+  const youConns = new Set(PROFILES.you.connections);
+  const theirs = new Set(person.connections || []);
+  let n=0; theirs.forEach(id=>{ if(youConns.has(id)) n++; });
+  return n;
+}
+function degreeFromYou(personId){
+  if (personId === 'you') return 0;
+  const youSet = new Set(PROFILES.you.connections);
+  if (youSet.has(personId)) return 1;
+  // degree 2: if anyone you connect to connects to them
+  for (const id of PROFILES.you.connections){
+    const p = PROFILES[id];
+    if (p && (p.connections||[]).includes(personId)) return 2;
+  }
+  return 3; // default >=3
+}
 function mutualCountDisplay(p){
-  if (p.id === 'you') return "500+ connections";
-  const n = mutualNumber(p.id);
-  return `${n} mutual connection${n===1?'':'s'}`;
+  if (p.id === 'you') return `<div class="ln-connections-line">${p.connectionsCount >= 500 ? '500+ connections' : (p.connectionsCount + ' connections')}</div>`;
+  const deg = degreeFromYou(p.id);
+  let base = mutualCount(p);
+  if (deg === 1) base = Math.max(base, 8);
+  else if (deg === 2) base = Math.max(base, 3);
+  else base = Math.max(base, 1);
+  return `<div class="ln-connections-line">${base} mutual connections</div>`;
+}
+
+function showToast(msg, ms=2000){
+  lnToast.textContent = msg;
+  lnToast.classList.add('show');
+  setTimeout(()=> lnToast.classList.remove('show'), ms);
 }
 
 function buildAllProfiles(){
@@ -760,13 +757,6 @@ function buildAllProfiles(){
     const section = buildProfileSection(p);
     section.style.display = 'none';
     lnScreens.appendChild(section);
-  });
-
-  // Sheet & button
-  document.getElementById('lnProceed').addEventListener('click', ()=>{
-    lnSheet.classList.remove('active');
-    closeLinkedIn();
-    showStage('stage2');
   });
 
   // Back button
@@ -779,20 +769,11 @@ function buildAllProfiles(){
     }
   });
 
+  // Search UX nicety
   document.getElementById('lnSearch').addEventListener('focus', (e)=> e.target.placeholder = "Search people, jobs, posts");
 }
 
-function iconBriefcase(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M10 4h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1h4V6a2 2 0 0 1 2-2Zm4 4V6h-4v2h4Zm7 6v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5h18Z"/></svg>`;}
-function iconSchool(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5 12.2V16l7 4 7-4v-3.8L12 16Z"/></svg>`;}
-function iconSpark(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M11 2l1.5 5H18l-4 3 1.5 5L11 12l-4.5 3L8 10 4 7h5.5L11 2z"/></svg>`;}
-function iconUsers(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4Zm-8 1a4 4 0 10-4-4 4 4 0 004 4Zm0 2c-3.33 0-10 1.67-10 5v3h12v-3c0-3.33-6.67-5-10-5Zm8 0c-.53 0-1.14.03-1.79.08A7.2 7.2 0 0120 20v2h4v-3c0-3.33-6.67-5-10-5Z"/></svg>`;}
-
-function showToast(msg, ms=2000){
-  lnToast.textContent = msg;
-  lnToast.classList.add('show');
-  setTimeout(()=> lnToast.classList.remove('show'), ms);
-}
-
+/* Build a profile card/section */
 function buildProfileSection(p){
   const sec = document.createElement('section');
   sec.id = `prof-${p.id}`;
@@ -802,35 +783,33 @@ function buildProfileSection(p){
 
   const isYou = p.id === 'you';
 
-  // Header
   const top = document.createElement('div');
-top.innerHTML = `
-  <div class="ln-cover"></div>
-  <div class="ln-pad ln-head">
-    <div class="ln-ava" aria-hidden="true"><span class="emo">${p.emoji || "🦉"}</span></div>
-    <div class="ln-head-main">
-      <div class="ln-name">${p.name} ${p.target ? '✅' : ''}</div>
-      <div class="ln-headline">${p.headline}</div>
+  top.innerHTML = `
+    <div class="ln-cover"></div>
+    <div class="ln-pad ln-head">
+      <div class="ln-ava" aria-hidden="true"><span class="emo">${p.emoji || "🦉"}</span></div>
+      <div class="ln-head-main">
+        <div class="ln-name">${p.name} ${p.target ? '✅' : ''}</div>
+        <div class="ln-headline">${p.headline}</div>
 
-      <!-- Firm • Education • Location • Mutual/Connections -->
-      <div class="ln-submeta">
-        <span>${p.company || '—'}</span>
-        <span>${p.school || '—'}</span>
-        <span>${p.loc || ''}</span>
-        <span>${mutualCountDisplay(p)}</span>
-      </div>
+        <div class="ln-submeta">
+          <span>${p.company || '—'}</span>
+          <span>${p.school || '—'}</span>
+          <span>${p.loc || ''}</span>
+        </div>
+        ${mutualCountDisplay(p)}
 
-      <div class="ln-buttonbar">
-        ${isYou ? '' : '<button class="ln-btn blue" data-action="connect" aria-label="Connect with ' + p.name + '">Connect</button>'}
-        ${isYou ? '' : '<button class="ln-btn ghost" aria-label="Message ' + p.name + '">Message</button>'}
-        ${isYou ? '' : '<button class="ln-btn ln-more" aria-label="More actions">···</button>'}
+        <div class="ln-buttonbar">
+          ${isYou ? '' : '<button class="ln-btn blue" data-action="connect" aria-label="Connect with ' + p.name + '">Connect</button>'}
+          ${isYou ? '' : '<button class="ln-btn ghost" data-action="message" aria-label="Message ' + p.name + '">Message</button>'}
+          ${isYou ? '' : '<button class="ln-btn ln-more" data-action="more" aria-label="More actions">···</button>'}
+        </div>
       </div>
     </div>
-  </div>
-`;
-
+  `;
   sec.appendChild(top);
 
+  /* About */
   const about = document.createElement('div');
   about.innerHTML = `
     <div class="ln-section-title">About</div>
@@ -840,11 +819,11 @@ top.innerHTML = `
 
   /* Highlights */
   const hi = document.createElement('div');
-  const mutualText = mutualCountDisplay(p);
+  const m = mutualCount(p);
   hi.innerHTML = `
     <div class="ln-section-title">Highlights</div>
     <div class="ln-section">
-      <div class="ln-highlight">${iconUsers()} <div><strong>${mutualText}</strong></div></div>
+      <div class="ln-highlight">${iconUsers()} <div><strong>${m}</strong> mutual connection${m===1?'':'s'}</div></div>
       <div class="ln-highlight">${iconSpark()} <div>Open to collaborating on low-carbon projects</div></div>
     </div>
   `;
@@ -914,7 +893,7 @@ top.innerHTML = `
   const conWrap = document.createElement('div');
   conWrap.innerHTML = `<div class="ln-section-title">Connections</div>`;
   const conList = document.createElement('div');
-  conList.className = 'ln-section lazy-connections ln-connlist';
+  conList.className = 'ln-section ln-connlist';
 
   const ids = shuffle(p.connections || []);
   if(ids.length === 0){
@@ -923,9 +902,11 @@ top.innerHTML = `
     ids.forEach(cid=>{
       const c = PROFILES[cid];
       if(!c || c.id === 'you') return;
-      const row = document.createElement('button');
+      const row = document.createElement('div');
       row.className = 'ln-result ln-connrow';
-      row.setAttribute('aria-label', `Open ${c.name} profile`);
+      row.setAttribute('role','button');
+      row.setAttribute('tabindex','0');
+      row.dataset.open = c.id;
       row.innerHTML = `
         <div class="ln-miniava"><span class="emo">${c.emoji || "🦉"}</span></div>
         <div class="label">
@@ -938,42 +919,62 @@ top.innerHTML = `
           </div>
         </div>
       `;
-      row.addEventListener('click', ()=> showProfile(c.id));
       conList.appendChild(row);
     });
   }
   conWrap.appendChild(conList);
   sec.appendChild(conWrap);
 
-  // Connect behavior — allow Sustainability/Environmental Engineer to advance
-  const primaryBtn = top.querySelector('[data-action="connect"]');
-  if (primaryBtn) {
-    primaryBtn.addEventListener('click', ()=>{
-      const headline = (p.headline || '').toLowerCase();
-      const isSustOrEnv =
-        headline.includes('sustainability engineer') ||
-        headline.includes('environmental engineer');
-
-      if (p.target || isSustOrEnv){
-        lnSheet.classList.add('active');
-      } else {
-        showToast("This isn’t the sustainability consultant — check their connections.");
-        primaryBtn.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:180});
-      }
-    });
-  }
-
-  // reveal connections when scrolled into view
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){ conList.classList.add('visible'); io.disconnect(); }
-    });
-  }, {root:lnScreens, threshold:.1});
-  io.observe(conList);
-
   return sec;
 }
 
+/* Icons */
+function iconBriefcase(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M10 4h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1h4V6a2 2 0 0 1 2-2Zm4 4V6h-4v2h4Zm7 6v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5h18Z"/></svg>`;}
+function iconSchool(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#6b7480" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3Zm0 13L5 12.2V16l7 4 7-4v-3.8L12 16Z"/></svg>`;}
+function iconSpark(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M11 2l1.5 5H18l-4 3 1.5 5L11 12l-4.5 3L8 10 4 7h5.5L11 2z"/></svg>`;}
+function iconUsers(){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#0a66c2"><path d="M16 11a4 4 0 10-4-4 4 4 0 004 4Zm-8 1a4 4 0 10-4-4 4 4 0 004 4Zm0 2c-3.33 0-10 1.67-10 5v3h12v-3c0-3.33-6.67-5-10-5Zm8 0c-.53 0-1.14.03-1.79.08A7.2 7.2 0 0120 20v2h4v-3c0-3.33-6.67-5-10-5Z"/></svg>`;}
+
+/* Event delegation for mobile reliability */
+lnScreens.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-action]');
+  if (btn){
+    const sec = e.target.closest('.ln-card');
+    const id = sec ? sec.id.replace('prof-','') : null;
+    if (!id) return;
+    handleProfileAction(id, btn.dataset.action);
+    return;
+  }
+  const openRow = e.target.closest('[data-open]');
+  if (openRow){
+    showProfile(openRow.dataset.open);
+  }
+});
+lnScreens.addEventListener('touchend', (e)=>{
+  const openRow = e.target.closest('[data-open]');
+  if (openRow){
+    e.preventDefault(); // avoid 300ms delay / ghost click
+    showProfile(openRow.dataset.open);
+  }
+}, {passive:false});
+
+function handleProfileAction(personId, action){
+  const p = PROFILES[personId];
+  if (!p) return;
+  if (action === 'connect'){
+    const headline = (p.headline || '').toLowerCase();
+    const allowed = p.target ||
+      headline.includes('sustainability engineer') ||
+      headline.includes('environmental engineer');
+    if (allowed){
+      openSuccessSheet();
+    } else {
+      showToast("This isn’t the sustainability consultant — check their connections.");
+    }
+  }
+  // 'message' and 'more' are no-ops for now
+}
+
+/* Nav + overlay */
 function showProfile(id, opts={}){
   if(opts.reset){ lnStack = []; }
   if(opts.push !== false){ lnStack.push(id); }
@@ -992,10 +993,50 @@ function showProfile(id, opts={}){
   lnScreens.scrollTo({top:0, behavior:'auto'});
 }
 
+function openLinkedIn(){
+  lnApp.classList.add('active');
+  lnApp.setAttribute('aria-hidden','false');
+  if(!lnScreens.dataset.init){ buildAllProfiles(); lnScreens.dataset.init = "1"; }
+  showProfile('you', {reset:true});
+  lnScreens.focus();
+}
+function closeLinkedIn(){
+  lnApp.classList.remove('active');
+  lnApp.setAttribute('aria-hidden','true');
+  lnStack = [];
+  lnBackBtn.style.display = 'none';
+  closeSuccessSheet();
+}
+
+/* Success sheet controls */
+function openSuccessSheet(){
+  lnBackdrop.classList.add('active');
+  lnSheet.classList.add('active');
+  // focus the primary action for a11y
+  const proceed = document.getElementById('lnProceed');
+  if (proceed) proceed.focus();
+}
+function closeSuccessSheet(){
+  lnBackdrop.classList.remove('active');
+  lnSheet.classList.remove('active');
+}
+
+/* Proceed -> go to Stage 2 */
+document.getElementById('lnProceed').addEventListener('click', ()=>{
+  closeLinkedIn();
+  showStage('stage2');
+});
+
+/* Dismiss on backdrop tap (mobile) */
+lnBackdrop.addEventListener('click', closeSuccessSheet);
+
 /* Bind Open LinkedIn button once DOM is ready */
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('openLinkedInBtn');
-  if (btn) btn.addEventListener('click', openLinkedIn);
+  if (btn) {
+    btn.addEventListener('click', openLinkedIn);
+    btn.addEventListener('touchend', (e)=>{ e.preventDefault(); openLinkedIn(); }, {passive:false});
+  }
 });
 </script>
 </body>
